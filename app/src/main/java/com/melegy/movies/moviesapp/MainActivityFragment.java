@@ -28,7 +28,6 @@ import java.net.URL;
  */
 public class MainActivityFragment extends Fragment {
 
-    //private final List<String> urls = new ArrayList<>();
     String[] posters;
     private ImageAdapter imageAdapter;
 
@@ -77,24 +76,18 @@ public class MainActivityFragment extends Fragment {
 
         @Override
         protected String[] doInBackground(String... params) {
-            // If there's no zip code, there's nothing to look up.  Verify size of params.
             if (params.length == 0) {
                 return null;
             }
-            Log.i(LOG_TAG, "DO");
             String sort_type = params[0];
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
+
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-            // Will contain the raw JSON response as a string.
             String moviesJSON = null;
 
             try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are avaiable at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
+
                 final String TMDB_URI_SCHEME = "http";
                 final String TMDB_URI_AUTHORITY = "api.themoviedb.org";
                 final String TMDB_URI_FIRST_PATH = "3";
@@ -102,7 +95,6 @@ public class MainActivityFragment extends Fragment {
                 final String TMDB_URI_THIRD_PATH = "movie";
                 final String API_PARAM = "api_key";
                 final String SORT_PARAM = "sort_by";
-
 
                 Uri.Builder builder = new Uri.Builder();
                 builder.scheme(TMDB_URI_SCHEME)
@@ -116,7 +108,6 @@ public class MainActivityFragment extends Fragment {
                 String myUrl = builder.build().toString();
                 URL url = new URL(myUrl);
 
-                // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -132,9 +123,6 @@ public class MainActivityFragment extends Fragment {
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
                     buffer.append(line + "\n");
                 }
 
@@ -146,8 +134,6 @@ public class MainActivityFragment extends Fragment {
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
                 return null;
             } finally {
                 if (urlConnection != null) {
