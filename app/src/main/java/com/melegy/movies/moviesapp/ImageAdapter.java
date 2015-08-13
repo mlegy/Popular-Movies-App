@@ -1,6 +1,7 @@
 package com.melegy.movies.moviesapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -15,12 +16,20 @@ import java.util.List;
  * Created by ahmad on 12/08/15.
  */
 public class ImageAdapter extends BaseAdapter {
-    private final List<String> urls = new ArrayList<>();
+    private ArrayList<String> urls;
     private Context mContext;
 
-    public ImageAdapter(Context c, List<String> urls_n) {
+    public ImageAdapter(Context c) {
         mContext = c;
-        urls.addAll(urls_n);
+        urls = new ArrayList<>();
+    }
+
+    public void addPosters(String[] posters){
+        for (String poster : posters){
+            urls.add(poster);
+        }
+        notifyDataSetChanged();
+
     }
 
     @Override
@@ -52,10 +61,8 @@ public class ImageAdapter extends BaseAdapter {
         // Trigger the download of the URL asynchronously into the image view.
         Picasso.with(mContext) //
                 .load(url) //
-                .fit() //
-                .tag(mContext) //
                 .into(view);
-
+        Log.i("URL", url);
         return view;
     }
 }

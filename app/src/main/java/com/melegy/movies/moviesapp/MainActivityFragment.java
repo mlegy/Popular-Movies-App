@@ -12,23 +12,34 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
 
-    private final List<String> urls = new ArrayList<>();
+    //private final List<String> urls = new ArrayList<>();
+    String[] posters;
+    private ImageAdapter imageAdapter;
+
 
     public MainActivityFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -37,7 +48,8 @@ public class MainActivityFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         GridView gridview = (GridView) view.findViewById(R.id.gridview);
-        //gridview.setAdapter(new ImageAdapter(getActivity(), getPosters(getMoviesData())));
+        imageAdapter = new ImageAdapter(getActivity());
+        gridview.setAdapter(imageAdapter);
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -47,20 +59,24 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
-        Log.i("A", "DO");
-
-        fetchMoviesTask task = new fetchMoviesTask();
-        task.execute("popularity.desc");
-
         return view;
     }
 
-    public class fetchMoviesTask extends AsyncTask<String, Void, Void> {
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        fetchMoviesTask task = new fetchMoviesTask();
+        task.execute("popularity.desc");
+
+    }
+
+    public class fetchMoviesTask extends AsyncTask<String, Void, String[]> {
 
         private final String LOG_TAG = fetchMoviesTask.class.getSimpleName();
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected String[] doInBackground(String... params) {
             // If there's no zip code, there's nothing to look up.  Verify size of params.
             if (params.length == 0) {
                 return null;
@@ -73,7 +89,7 @@ public class MainActivityFragment extends Fragment {
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
-            String forecastJsonStr = null;
+            String moviesJSON = null;
 
             try {
                 // Construct the URL for the OpenWeatherMap query
@@ -126,7 +142,7 @@ public class MainActivityFragment extends Fragment {
                     // Stream was empty.  No point in parsing.
                     return null;
                 }
-                forecastJsonStr = buffer.toString();
+                moviesJSON = buffer.toString();
 
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -147,8 +163,9 @@ public class MainActivityFragment extends Fragment {
             }
 
             try {
-                //return getMoviesData(forecastJsonStr);
-                Log.i(LOG_TAG, forecastJsonStr.toString());
+                String[] moviesData = getMoviesData(moviesJSON);
+                posters = getPosters(moviesData);
+                return posters;
             } catch (Exception e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -156,8 +173,48 @@ public class MainActivityFragment extends Fragment {
 
             return null;
         }
+
+
+        private String[] getMoviesData(String moviesJSON)
+                throws JSONException {
+
+            // These are the names of the JSON objects that need to be extracted.
+            final String MDB_LIST = "results";
+            final String MDB_POSTER = "poster_path";
+
+            JSONObject forecastJson = new JSONObject(moviesJSON);
+            JSONArray moviesArray = forecastJson.getJSONArray(MDB_LIST);
+
+            String[] resultStrs = new String[moviesArray.length()];
+            for (int i = 0; i < moviesArray.length(); i++) {
+                String poster;
+                JSONObject movieData = moviesArray.getJSONObject(i);
+                poster = movieData.getString(MDB_POSTER);
+                resultStrs[i] = poster;
+            }
+
+            return resultStrs;
+
+        }
+
+        private String[] getPosters(String[] postersIDs) {
+            String BASE_URL = "http://image.tmdb.org/t/p/";
+            String SIZE = "w185";
+            String[] postersURLS = new String[postersIDs.length];
+            for (int i = 0; i < postersIDs.length; i++) {
+                postersURLS[i] = (BASE_URL + SIZE + postersIDs[i]);
+            }
+            return postersURLS;
+        }
+
+        @Override
+        protected void onPostExecute(String[] postersURLS) {
+            if (postersURLS != null) {
+                posters = new String[0];
+                posters = postersURLS.clone();
+                imageAdapter.addPosters(posters);
+            }
+        }
     }
-
-
 
 }
