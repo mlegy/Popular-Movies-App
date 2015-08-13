@@ -2,9 +2,8 @@ package com.melegy.movies.moviesapp;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.text.format.Time;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +11,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +37,7 @@ public class MainActivityFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         GridView gridview = (GridView) view.findViewById(R.id.gridview);
-        gridview.setAdapter(new ImageAdapter(getActivity(), getPosters(getMoviesData())));
+        //gridview.setAdapter(new ImageAdapter(getActivity(), getPosters(getMoviesData())));
 
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
@@ -52,20 +47,26 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
+        Log.i("A", "DO");
+
+        fetchMoviesTask task = new fetchMoviesTask();
+        task.execute("popularity.desc");
+
         return view;
     }
 
-    public class fetchMoviesTask extends AsyncTask<Void, Void, Void>{
+    public class fetchMoviesTask extends AsyncTask<String, Void, Void> {
+
+        private final String LOG_TAG = fetchMoviesTask.class.getSimpleName();
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(String... params) {
             // If there's no zip code, there's nothing to look up.  Verify size of params.
             if (params.length == 0) {
                 return null;
             }
-            String format = "json";
-            String units = "metric";
-            int numDays = 7;
+            Log.i(LOG_TAG, "DO");
+            String sort_type = params[0];
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
@@ -79,14 +80,12 @@ public class MainActivityFragment extends Fragment {
                 // Possible parameters are avaiable at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
                 final String TMDB_URI_SCHEME = "http";
-                final String TMDB_URI_AUTHORITY = "http://api.themoviedb.org";
+                final String TMDB_URI_AUTHORITY = "api.themoviedb.org";
                 final String TMDB_URI_FIRST_PATH = "3";
                 final String TMDB_URI_SECOND_PATH = "discover";
                 final String TMDB_URI_THIRD_PATH = "movie";
-                final String QUERY_PARAM = "id";
-                final String FORMAT_PARAM = "mode";
-                final String UNITS_PARAM = "units";
-                final String DAYS_PARAM = "cnt";
+                final String API_PARAM = "api_key";
+                final String SORT_PARAM = "sort_by";
 
 
                 Uri.Builder builder = new Uri.Builder();
@@ -95,11 +94,8 @@ public class MainActivityFragment extends Fragment {
                         .appendPath(TMDB_URI_FIRST_PATH)
                         .appendPath(TMDB_URI_SECOND_PATH)
                         .appendPath(TMDB_URI_THIRD_PATH)
-                        .appendPath(FORECAST_URI_FOURTH_PATH)
-                        .appendQueryParameter(QUERY_PARAM, params[0])
-                        .appendQueryParameter(FORMAT_PARAM, format)
-                        .appendQueryParameter(UNITS_PARAM, units)
-                        .appendQueryParameter(DAYS_PARAM, Integer.toString(numDays));
+                        .appendQueryParameter(API_PARAM, sensitiveData.API_KEY)
+                        .appendQueryParameter(SORT_PARAM, sort_type);
 
                 String myUrl = builder.build().toString();
                 URL url = new URL(myUrl);
@@ -151,8 +147,9 @@ public class MainActivityFragment extends Fragment {
             }
 
             try {
-                return getWeatherDataFromJson(forecastJsonStr, numDays);
-            } catch (JSONException e) {
+                //return getMoviesData(forecastJsonStr);
+                Log.i(LOG_TAG, forecastJsonStr.toString());
+            } catch (Exception e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
@@ -160,40 +157,7 @@ public class MainActivityFragment extends Fragment {
             return null;
         }
     }
-        }
 
-        private String[] getMoviesData(String moviesJSON)
-                throws JSONException {
 
-            // These are the names of the JSON objects that need to be extracted.
-            final String MDB_LIST = "results";
-            final String MDB_POSTER = "poster_path";
-
-            JSONObject forecastJson = new JSONObject(moviesJSON);
-            JSONArray moviesArray = forecastJson.getJSONArray(MDB_LIST);
-
-            String[] resultStrs = new String[moviesArray.length()];
-            for (int i = 0; i < moviesArray.length(); i++) {
-                String poster;
-                JSONObject movieData = moviesArray.getJSONObject(i);
-                JSONObject movieObject = movieData.getJSONArray(MDB_POSTER).getJSONObject(0);
-                poster = movieObject.getString(MDB_POSTER);
-                resultStrs[i] = poster;
-            }
-
-            return resultStrs;
-
-        }
-
-        private List<String> getPosters(String[] postersIDs){
-            String BASE_URL = " http://image.tmdb.org/t/p/";
-            String SIZE = "w185";
-            List<String> postersURLS = new ArrayList<>();
-            for (String postersID : postersIDs) {
-                postersURLS.add(BASE_URL + SIZE +postersID);
-            }
-            return postersURLS;
-        }
-    }
 
 }
