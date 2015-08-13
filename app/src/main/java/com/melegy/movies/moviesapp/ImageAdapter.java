@@ -18,12 +18,9 @@ public class ImageAdapter extends BaseAdapter {
     private final List<String> urls = new ArrayList<>();
     private Context mContext;
 
-    public ImageAdapter(Context c) {
+    public ImageAdapter(Context c, List<String> urls_n) {
         mContext = c;
-
-        // Triple up the list.
-        urls.add("http://i.imgur.com/DvpvklR.png");
-
+        urls.addAll(urls_n);
     }
 
     @Override
