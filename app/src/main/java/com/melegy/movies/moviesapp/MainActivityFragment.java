@@ -186,7 +186,7 @@ public class MainActivityFragment extends Fragment {
             String poster_size = "w185";
             String[] postersURLS = new String[movies.size()];
             int i = 0;
-            for (Movie movie: movies) {
+            for (Movie movie : movies) {
                 Uri poster_url = movie.getPosterURI(poster_size);
                 Log.i("PRE GET POSTERS", poster_url.toString());
                 postersURLS[i] = poster_url.toString();

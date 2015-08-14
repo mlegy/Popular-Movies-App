@@ -1,7 +1,6 @@
 package com.melegy.movies.moviesapp;
 
 import android.net.Uri;
-import android.os.Bundle;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,33 +37,6 @@ public class Movie {
         this.vote_average = vote_average;
         this.vote_count = vote_count;
     }
-
-//    public Movie(Bundle bundle) {
-//        this(
-//                bundle.getLong(KEY_ID),
-//                bundle.getString(KEY_TITLE),
-//                bundle.getString(KEY_OVERVIEW),
-//                bundle.getString(KEY_RELEASE_DATE),
-//                bundle.getString(KEY_POSTER),
-//                bundle.getDouble(KEY_VOTE_AVERAGE),
-//                bundle.getLong(KEY_VOTE_COUNT)
-//        );
-//    }
-//
-//    public Bundle toBundle() {
-//
-//        Bundle bundle = new Bundle();
-//
-//        bundle.putLong(KEY_ID, id);
-//        bundle.putString(KEY_TITLE, title);
-//        bundle.putString(KEY_OVERVIEW, overview);
-//        bundle.putString(KEY_RELEASE_DATE, release_date);
-//        bundle.putString(KEY_POSTER, poster_path);
-//        bundle.putDouble(KEY_VOTE_AVERAGE, vote_average);
-//        bundle.putLong(KEY_VOTE_COUNT, vote_count);
-//
-//        return bundle;
-//    }
 
     public static Movie deserialize(JSONObject movieJsonObject) throws JSONException {
 
