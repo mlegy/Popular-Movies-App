@@ -58,8 +58,6 @@ public class MainActivityFragment extends Fragment {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-//                Toast.makeText(getActivity(), "" + position,
-//                        Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(getActivity(), detailActivity.class);
                 Movie mMovie = movies_list.get(position);
@@ -196,7 +194,7 @@ public class MainActivityFragment extends Fragment {
             String[] postersURLS = new String[movies.size()];
             int i = 0;
             for (Movie movie : movies) {
-                Uri poster_url = movie.getPosterURI(poster_size);
+                Uri poster_url = movie.getPosterURI(poster_size, "poster");
                 postersURLS[i] = poster_url.toString();
                 i++;
             }

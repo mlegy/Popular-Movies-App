@@ -108,16 +108,6 @@ public class Movie implements Parcelable {
         return KEY_VOTE_COUNT;
     }
 
-    public Uri getPosterURI(String size) {
-        final String BASE_URL = "http://image.tmdb.org/t/p/";
-        Uri poster_uri = Uri.parse(BASE_URL)
-                .buildUpon()
-                .appendPath(size)
-                .appendEncodedPath(getPoster_path())
-                .build();
-        return poster_uri;
-    }
-
     public long getId() {
         return id;
     }
@@ -158,6 +148,13 @@ public class Movie implements Parcelable {
         this.poster_path = poster_path;
     }
 
+    public String getBackdrop_path() {
+        return backdrop_path;
+    }
+
+    public void setBackdrop_path(String backdrop_path) {
+        this.backdrop_path = backdrop_path;
+    }
     public double getVote_average() {
         return vote_average;
     }
@@ -191,7 +188,20 @@ public class Movie implements Parcelable {
         dest.writeLong(this.vote_count);
     }
 
-    public void setBackdrop_path(String backdrop_path) {
-        this.backdrop_path = backdrop_path;
+    public Uri getPosterURI(String size, String type) {
+        final String BASE_URL = "http://image.tmdb.org/t/p/";
+        String image_path = null;
+        if(type.equals("poster")){
+            image_path = getPoster_path();
+        }else if(type.equals("backdrop")){
+            image_path = getBackdrop_path();
+        }
+        Uri poster_uri = Uri.parse(BASE_URL)
+                .buildUpon()
+                .appendPath(size)
+                .appendEncodedPath(image_path)
+                .build();
+        return poster_uri;
     }
+
 }
