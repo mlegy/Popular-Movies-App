@@ -13,31 +13,52 @@ import org.json.JSONObject;
  */
 public class Movie implements Parcelable {
 
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        public Movie createFromParcel(Parcel source) {
+            return new Movie(source);
+        }
+
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
     private static final String KEY_ID = "id";
     private static final String KEY_TITLE = "title";
     private static final String KEY_OVERVIEW = "overview";
     private static final String KEY_RELEASE_DATE = "release_date";
     private static final String KEY_POSTER = "poster_path";
+    private static final String KEY_backdrop = "backdrop_path";
     private static final String KEY_VOTE_AVERAGE = "vote_average";
     private static final String KEY_VOTE_COUNT = "vote_count";
-
     private long id;
     private String title;
     private String overview;
     private String release_date;
     private String poster_path;
+    private String backdrop_path;
     private double vote_average;
     private long vote_count;
 
-
-    public Movie(long id, String title, String overview, String release_date, String poster_path, double vote_average, long vote_count) {
+    public Movie(long id, String title, String overview, String release_date, String poster_path, String backdrop_path, double vote_average, long vote_count) {
         this.setId(id);
         this.setTitle(title);
         this.setOverview(overview);
         this.setRelease_date(release_date);
         this.setPoster_path(poster_path);
+        this.setBackdrop_path(backdrop_path);
         this.setVote_average(vote_average);
         this.setVote_count(vote_count);
+    }
+
+    private Movie(Parcel in) {
+        this.id = in.readLong();
+        this.title = in.readString();
+        this.overview = in.readString();
+        this.release_date = in.readString();
+        this.poster_path = in.readString();
+        this.backdrop_path = in.readString();
+        this.vote_average = in.readDouble();
+        this.vote_count = in.readLong();
     }
 
     public static Movie deserialize(JSONObject movieJsonObject) throws JSONException {
@@ -47,10 +68,11 @@ public class Movie implements Parcelable {
         String overview = movieJsonObject.getString(getKeyOverview());
         String release_date = movieJsonObject.getString(getKeyReleaseDate());
         String poster_path = movieJsonObject.getString(getKeyPoster());
+        String backdrop_path = movieJsonObject.getString(getKEY_backdrop());
         double vote_average = movieJsonObject.getDouble(getKeyVoteAverage());
         long vote_count = movieJsonObject.getLong(getKeyVoteCount());
 
-        Movie movie = new Movie(id, title, overview, release_date, poster_path, vote_average, vote_count);
+        Movie movie = new Movie(id, title, overview, release_date, poster_path, backdrop_path, vote_average, vote_count);
         return movie;
     }
 
@@ -72,6 +94,10 @@ public class Movie implements Parcelable {
 
     public static String getKeyPoster() {
         return KEY_POSTER;
+    }
+
+    public static String getKEY_backdrop() {
+        return KEY_backdrop;
     }
 
     public static String getKeyVoteAverage() {
@@ -160,27 +186,12 @@ public class Movie implements Parcelable {
         dest.writeString(this.overview);
         dest.writeString(this.release_date);
         dest.writeString(this.poster_path);
+        dest.writeString(this.backdrop_path);
         dest.writeDouble(this.vote_average);
         dest.writeLong(this.vote_count);
     }
 
-    private Movie(Parcel in) {
-        this.id = in.readLong();
-        this.title = in.readString();
-        this.overview = in.readString();
-        this.release_date = in.readString();
-        this.poster_path = in.readString();
-        this.vote_average = in.readDouble();
-        this.vote_count = in.readLong();
+    public void setBackdrop_path(String backdrop_path) {
+        this.backdrop_path = backdrop_path;
     }
-
-    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
-        public Movie createFromParcel(Parcel source) {
-            return new Movie(source);
-        }
-
-        public Movie[] newArray(int size) {
-            return new Movie[size];
-        }
-    };
 }
