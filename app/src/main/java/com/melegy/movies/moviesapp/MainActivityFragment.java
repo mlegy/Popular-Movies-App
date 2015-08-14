@@ -1,5 +1,6 @@
 package com.melegy.movies.moviesapp;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,8 +55,11 @@ public class MainActivityFragment extends Fragment {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                Toast.makeText(getActivity(), "" + position,
-                        Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "" + position,
+//                        Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), detailActivity.class);
+                startActivity(intent);
+
             }
         });
 
@@ -116,7 +119,7 @@ public class MainActivityFragment extends Fragment {
 
                 // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 if (inputStream == null) {
                     // Nothing to do.
                     return null;
@@ -125,7 +128,7 @@ public class MainActivityFragment extends Fragment {
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    buffer.append(line + "\n");
+                    buffer.append(line).append("\n");
                 }
 
                 if (buffer.length() == 0) {
@@ -151,8 +154,7 @@ public class MainActivityFragment extends Fragment {
             }
 
             try {
-                Collection<Movie> moviesData = getMoviesData(moviesJSON);
-                return moviesData;
+                return getMoviesData(moviesJSON);
             } catch (Exception e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -188,9 +190,7 @@ public class MainActivityFragment extends Fragment {
             int i = 0;
             for (Movie movie : movies) {
                 Uri poster_url = movie.getPosterURI(poster_size);
-                Log.i("PRE GET POSTERS", poster_url.toString());
                 postersURLS[i] = poster_url.toString();
-                Log.i("GET POSTERS", postersURLS[i].toString());
                 i++;
             }
             return postersURLS;
@@ -201,7 +201,6 @@ public class MainActivityFragment extends Fragment {
             if (movies != null) {
                 posters = new String[0];
                 posters = getPosters(movies);
-                Log.i("onPost", posters.toString());
                 imageAdapter.addPosters(posters);
             }
         }
