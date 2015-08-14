@@ -22,6 +22,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -70,12 +72,12 @@ public class MainActivityFragment extends Fragment {
 
     }
 
-    public class fetchMoviesTask extends AsyncTask<String, Void, String[]> {
+    public class fetchMoviesTask extends AsyncTask<String, Void, Collection<Movie>> {
 
         private final String LOG_TAG = fetchMoviesTask.class.getSimpleName();
 
         @Override
-        protected String[] doInBackground(String... params) {
+        protected Collection<Movie> doInBackground(String... params) {
             if (params.length == 0) {
                 return null;
             }
@@ -149,9 +151,8 @@ public class MainActivityFragment extends Fragment {
             }
 
             try {
-                String[] moviesData = getMoviesData(moviesJSON);
-                posters = getPosters(moviesData);
-                return posters;
+                Collection<Movie> moviesData = getMoviesData(moviesJSON);
+                return moviesData;
             } catch (Exception e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -161,43 +162,46 @@ public class MainActivityFragment extends Fragment {
         }
 
 
-        private String[] getMoviesData(String moviesJSON)
+        private Collection<Movie> getMoviesData(String moviesJSON)
                 throws JSONException {
 
             // These are the names of the JSON objects that need to be extracted.
             final String MDB_LIST = "results";
-            final String MDB_POSTER = "poster_path";
 
             JSONObject forecastJson = new JSONObject(moviesJSON);
             JSONArray moviesArray = forecastJson.getJSONArray(MDB_LIST);
 
-            String[] resultStrs = new String[moviesArray.length()];
+            Collection<Movie> movies = new ArrayList<>();
             for (int i = 0; i < moviesArray.length(); i++) {
-                String poster;
-                JSONObject movieData = moviesArray.getJSONObject(i);
-                poster = movieData.getString(MDB_POSTER);
-                resultStrs[i] = poster;
+                JSONObject movieObj = moviesArray.getJSONObject(i);
+                Movie movie = Movie.deserialize(movieObj);
+                movies.add(movie);
             }
 
-            return resultStrs;
+            return movies;
 
         }
 
-        private String[] getPosters(String[] postersIDs) {
-            String BASE_URL = "http://image.tmdb.org/t/p/";
-            String SIZE = "w185";
-            String[] postersURLS = new String[postersIDs.length];
-            for (int i = 0; i < postersIDs.length; i++) {
-                postersURLS[i] = (BASE_URL + SIZE + postersIDs[i]);
+        private String[] getPosters(Collection<Movie> movies) {
+            String poster_size = "w185";
+            String[] postersURLS = new String[movies.size()];
+            int i = 0;
+            for (Movie movie: movies) {
+                Uri poster_url = movie.getPosterURI(poster_size);
+                Log.i("PRE GET POSTERS", poster_url.toString());
+                postersURLS[i] = poster_url.toString();
+                Log.i("GET POSTERS", postersURLS[i].toString());
+                i++;
             }
             return postersURLS;
         }
 
         @Override
-        protected void onPostExecute(String[] postersURLS) {
-            if (postersURLS != null) {
+        protected void onPostExecute(Collection<Movie> movies) {
+            if (movies != null) {
                 posters = new String[0];
-                posters = postersURLS.clone();
+                posters = getPosters(movies);
+                Log.i("onPost", posters.toString());
                 imageAdapter.addPosters(posters);
             }
         }
