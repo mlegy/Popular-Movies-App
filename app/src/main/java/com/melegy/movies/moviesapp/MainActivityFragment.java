@@ -24,6 +24,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -32,6 +33,8 @@ public class MainActivityFragment extends Fragment {
 
     String[] posters;
     private ImageAdapter imageAdapter;
+    Collection<Movie> movies;
+    private List<Movie> movies_list;
 
 
     public MainActivityFragment() {
@@ -44,7 +47,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -57,7 +60,10 @@ public class MainActivityFragment extends Fragment {
                                     int position, long id) {
 //                Toast.makeText(getActivity(), "" + position,
 //                        Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(getActivity(), detailActivity.class);
+                Movie mMovie = movies_list.get(position);
+                intent.putExtra("movie", mMovie);
                 startActivity(intent);
 
             }
@@ -179,6 +185,7 @@ public class MainActivityFragment extends Fragment {
                 Movie movie = Movie.deserialize(movieObj);
                 movies.add(movie);
             }
+            movies_list = new ArrayList<>(movies);
 
             return movies;
 

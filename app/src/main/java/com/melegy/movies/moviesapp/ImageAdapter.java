@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by ahmad on 12/08/15.
@@ -30,6 +29,10 @@ public class ImageAdapter extends BaseAdapter {
         }
         notifyDataSetChanged();
 
+    }
+
+    public Movie[] moviesArray(int size){
+        return new Movie[size];
     }
 
     @Override
@@ -62,7 +65,6 @@ public class ImageAdapter extends BaseAdapter {
         Picasso.with(mContext) //
                 .load(url) //
                 .into(view);
-        Log.i("URL", url);
         return view;
     }
 }
