@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
@@ -32,10 +33,10 @@ import java.util.List;
 public class MainActivityFragment extends Fragment {
 
     String[] posters;
-    private ImageAdapter imageAdapter;
     Collection<Movie> movies;
-    private List<Movie> movies_list;
-
+    private ImageAdapter imageAdapter;
+    private List<Movie> movies_list = new ArrayList<>();
+    private int page_num = 1;
 
     public MainActivityFragment() {
     }
@@ -67,6 +68,19 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
+        gridview.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                page_num += 1;
+                updateView();
+            }
+        });
+
         return view;
     }
 
@@ -74,9 +88,13 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        fetchMoviesTask task = new fetchMoviesTask();
-        task.execute("popularity.desc");
+        updateView();
 
+    }
+
+    private void updateView() {
+        fetchMoviesTask task = new fetchMoviesTask();
+        task.execute("popularity.desc", page_num + "");
     }
 
     public class fetchMoviesTask extends AsyncTask<String, Void, Collection<Movie>> {
@@ -89,6 +107,7 @@ public class MainActivityFragment extends Fragment {
                 return null;
             }
             String sort_type = params[0];
+            String page_num = params[1];
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
@@ -104,6 +123,7 @@ public class MainActivityFragment extends Fragment {
                 final String TMDB_URI_THIRD_PATH = "movie";
                 final String API_PARAM = "api_key";
                 final String SORT_PARAM = "sort_by";
+                final String PAGE_PARAM = "page";
 
                 Uri.Builder builder = new Uri.Builder();
                 builder.scheme(TMDB_URI_SCHEME)
@@ -112,11 +132,11 @@ public class MainActivityFragment extends Fragment {
                         .appendPath(TMDB_URI_SECOND_PATH)
                         .appendPath(TMDB_URI_THIRD_PATH)
                         .appendQueryParameter(API_PARAM, sensitiveData.API_KEY)
-                        .appendQueryParameter(SORT_PARAM, sort_type);
+                        .appendQueryParameter(SORT_PARAM, sort_type)
+                        .appendQueryParameter(PAGE_PARAM, page_num);
 
                 String myUrl = builder.build().toString();
                 URL url = new URL(myUrl);
-
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -183,7 +203,7 @@ public class MainActivityFragment extends Fragment {
                 Movie movie = Movie.deserialize(movieObj);
                 movies.add(movie);
             }
-            movies_list = new ArrayList<>(movies);
+            movies_list.addAll(movies);
 
             return movies;
 

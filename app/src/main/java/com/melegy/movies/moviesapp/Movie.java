@@ -155,6 +155,7 @@ public class Movie implements Parcelable {
     public void setBackdrop_path(String backdrop_path) {
         this.backdrop_path = backdrop_path;
     }
+
     public double getVote_average() {
         return vote_average;
     }
@@ -191,9 +192,9 @@ public class Movie implements Parcelable {
     public Uri getPosterURI(String size, String type) {
         final String BASE_URL = "http://image.tmdb.org/t/p/";
         String image_path = null;
-        if(type.equals("poster")){
+        if (type.equals("poster")) {
             image_path = getPoster_path();
-        }else if(type.equals("backdrop")){
+        } else if (type.equals("backdrop")) {
             image_path = getBackdrop_path();
         }
         Uri poster_uri = Uri.parse(BASE_URL)
