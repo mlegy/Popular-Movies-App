@@ -1,9 +1,11 @@
 package com.melegy.movies.moviesapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +39,7 @@ public class MainActivityFragment extends Fragment {
     private ImageAdapter imageAdapter;
     private List<Movie> movies_list = new ArrayList<>();
     private int page_num = 1;
+    private GridView gridview;
 
     public MainActivityFragment() {
     }
@@ -52,7 +55,7 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        GridView gridview = (GridView) view.findViewById(R.id.gridview);
+        gridview = (GridView) view.findViewById(R.id.gridview);
         imageAdapter = new ImageAdapter(getActivity());
         gridview.setAdapter(imageAdapter);
 
@@ -89,12 +92,39 @@ public class MainActivityFragment extends Fragment {
     public void onStart() {
         super.onStart();
         updateView();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        Boolean updated = settings.getBoolean("updated", false);
+        if(updated) {
+            page_num = 1;
+            gridview.setAdapter(null);
+            if(movies != null) {
+                movies.clear();
+            }
+            if (movies_list != null) {
+                movies_list.clear();
+            }
+            posters = new String[0];
+            gridview.invalidateViews();
+            imageAdapter = null;
+            imageAdapter = new ImageAdapter(getActivity());
+            updateView();
+            gridview.setAdapter(imageAdapter);
+            updated =false;
+
+        }else{
+            updateView();
+        }
     }
 
     private void updateView() {
+
         fetchMoviesTask task = new fetchMoviesTask();
-        task.execute("popularity.desc", page_num + "");
+        task.execute(String.valueOf(page_num));
     }
 
     public class fetchMoviesTask extends AsyncTask<String, Void, Collection<Movie>> {
@@ -106,8 +136,9 @@ public class MainActivityFragment extends Fragment {
             if (params.length == 0) {
                 return null;
             }
-            String sort_type = params[0];
-            String page_num = params[1];
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String sort_type = prefs.getString(getString(R.string.pref_sort_type_key), "popularity.desc");
+            String page_num = params[0];
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
@@ -137,6 +168,7 @@ public class MainActivityFragment extends Fragment {
 
                 String myUrl = builder.build().toString();
                 URL url = new URL(myUrl);
+                Log.i("TYPE", sort_type);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
