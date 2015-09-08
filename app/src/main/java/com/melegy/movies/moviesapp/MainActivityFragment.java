@@ -9,6 +9,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -29,24 +32,25 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class MainActivityFragment extends Fragment {
 
     String[] posters;
     Collection<Movie> movies;
+    int myLastVisiblePos;
     private ImageAdapter imageAdapter;
     private List<Movie> movies_list = new ArrayList<>();
     private int page_num = 1;
     private GridView gridview;
-    int myLastVisiblePos;
+    private String sort_type;
+
 
     public MainActivityFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sort_type = prefs.getString(getString(R.string.pref_sort_type), "popularity.desc");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -98,6 +102,50 @@ public class MainActivityFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        MenuItem action_sort_by_popularity = menu.findItem(R.id.action_sort_by_popularity);
+        MenuItem action_sort_by_rating = menu.findItem(R.id.action_sort_by_rating);
+
+        if (sort_type.contentEquals(getResources().getString(R.string.pref_sort_popularity))) {
+            if (!action_sort_by_popularity.isChecked()) {
+                action_sort_by_popularity.setChecked(true);
+            }
+        } else if (sort_type.contentEquals(getResources().getString(R.string.pref_sort_type_rating))) {
+            if (!action_sort_by_rating.isChecked()) {
+                action_sort_by_rating.setChecked(true);
+            }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_sort_by_popularity:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
+                sort_type = getResources().getString(R.string.pref_sort_popularity);
+                reCreateView();
+                return true;
+            case R.id.action_sort_by_rating:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
+                sort_type = getResources().getString(R.string.pref_sort_type_rating);
+                reCreateView();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     @Override
     public void onStart() {
@@ -111,20 +159,24 @@ public class MainActivityFragment extends Fragment {
         super.onResume();
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
         Boolean updated = settings.getBoolean("updated", false);
-        if(updated) {
-            page_num = 1;
-            gridview.setAdapter(null);
-            if(movies != null) {
-                movies.clear();
-            }
-            if (movies_list != null) {
-                movies_list.clear();
-            }
-            posters = new String[0];
-            imageAdapter = new ImageAdapter(getActivity());
-            updateView();
-            gridview.setAdapter(imageAdapter);
-       }
+        if (updated) {
+            reCreateView();
+        }
+    }
+
+    private void reCreateView() {
+        page_num = 1;
+        gridview.setAdapter(null);
+        if (movies != null) {
+            movies.clear();
+        }
+        if (movies_list != null) {
+            movies_list.clear();
+        }
+        posters = new String[0];
+        imageAdapter = new ImageAdapter(getActivity());
+        updateView();
+        gridview.setAdapter(imageAdapter);
     }
 
     private void updateView() {
@@ -142,8 +194,6 @@ public class MainActivityFragment extends Fragment {
             if (params.length == 0) {
                 return null;
             }
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            String sort_type = prefs.getString(getString(R.string.pref_sort_type_key), "popularity.desc");
             String page_num = params[0];
             Log.i("PAGE_NUM", page_num);
 
