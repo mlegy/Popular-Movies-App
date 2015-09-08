@@ -40,6 +40,7 @@ public class MainActivityFragment extends Fragment {
     private List<Movie> movies_list = new ArrayList<>();
     private int page_num = 1;
     private GridView gridview;
+    int myLastVisiblePos;
 
     public MainActivityFragment() {
     }
@@ -71,6 +72,8 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
+        myLastVisiblePos = gridview.getFirstVisiblePosition();
+
         gridview.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -79,8 +82,16 @@ public class MainActivityFragment extends Fragment {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                page_num += 1;
-                updateView();
+                int currentFirstVisPos = view.getFirstVisiblePosition();
+                if (currentFirstVisPos > myLastVisiblePos) {
+                    Log.i("SCROLL", "DOWN");
+                }
+                if (currentFirstVisPos < myLastVisiblePos) {
+                    page_num += 1;
+                    updateView();
+                    Log.i("SCROLL", "UP");
+                }
+                myLastVisiblePos = currentFirstVisPos;
             }
         });
 
@@ -91,6 +102,7 @@ public class MainActivityFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        page_num = 1;
         updateView();
     }
 
@@ -109,16 +121,10 @@ public class MainActivityFragment extends Fragment {
                 movies_list.clear();
             }
             posters = new String[0];
-            gridview.invalidateViews();
-            imageAdapter = null;
             imageAdapter = new ImageAdapter(getActivity());
             updateView();
             gridview.setAdapter(imageAdapter);
-            updated =false;
-
-        }else{
-            updateView();
-        }
+       }
     }
 
     private void updateView() {
@@ -139,6 +145,7 @@ public class MainActivityFragment extends Fragment {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
             String sort_type = prefs.getString(getString(R.string.pref_sort_type_key), "popularity.desc");
             String page_num = params[0];
+            Log.i("PAGE_NUM", page_num);
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
