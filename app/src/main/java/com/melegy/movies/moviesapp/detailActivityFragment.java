@@ -55,8 +55,10 @@ public class detailActivityFragment extends Fragment {
 
     @Override
     public void onStart() {
-        fetchReviewsTask task = new fetchReviewsTask();
-        task.execute();
+        fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
+        fetchTrailersTask.execute();
+        fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
+        fetchReviewsTask.execute();
         super.onStart();
     }
 
@@ -72,9 +74,9 @@ public class detailActivityFragment extends Fragment {
 
     }
 
-    public class fetchReviewsTask extends AsyncTask<Void, Void, Collection<Trailer>> {
+    public class fetchTrailersTask extends AsyncTask<Void, Void, Collection<Trailer>> {
 
-        private final String LOG_TAG = fetchReviewsTask.class.getSimpleName();
+        private final String LOG_TAG = fetchTrailersTask.class.getSimpleName();
 
         @Override
         protected Collection<Trailer> doInBackground(Void... params) {
@@ -188,4 +190,120 @@ public class detailActivityFragment extends Fragment {
             }
         }
     }
+
+    public class fetchReviewsTask extends AsyncTask<Void, Void, Collection<Review>> {
+
+        private final String LOG_TAG = fetchReviewsTask.class.getSimpleName();
+
+        @Override
+        protected Collection<Review> doInBackground(Void... params) {
+
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+
+            String moviesJSON = null;
+
+            try {
+
+                final String TMDB_URI_SCHEME = "http";
+                final String TMDB_URI_AUTHORITY = "api.themoviedb.org";
+                final String TMDB_URI_FIRST_PATH = "3";
+                final String TMDB_URI_SECOND_PATH = "movie";
+                final String TMDB_URI_THIRD_PATH = movie.getId() + "";
+                final String TMDB_URI_FOURTH_PATH = "reviews";
+                final String API_PARAM = "api_key";
+
+
+                Uri.Builder builder = new Uri.Builder();
+                builder.scheme(TMDB_URI_SCHEME)
+                        .authority(TMDB_URI_AUTHORITY)
+                        .appendPath(TMDB_URI_FIRST_PATH)
+                        .appendPath(TMDB_URI_SECOND_PATH)
+                        .appendPath(TMDB_URI_THIRD_PATH)
+                        .appendPath(TMDB_URI_FOURTH_PATH)
+                        .appendQueryParameter(API_PARAM, sensitiveData.API_KEY);
+
+                String myUrl = builder.build().toString();
+                URL url = new URL(myUrl);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+
+                // Read the input stream into a String
+                InputStream inputStream = urlConnection.getInputStream();
+                StringBuilder buffer = new StringBuilder();
+                if (inputStream == null) {
+                    // Nothing to do.
+                    return null;
+                }
+                reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    buffer.append(line).append("\n");
+                }
+
+                if (buffer.length() == 0) {
+                    // Stream was empty.  No point in parsing.
+                    return null;
+                }
+                moviesJSON = buffer.toString();
+
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error ", e);
+                return null;
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (final IOException e) {
+                        Log.e(LOG_TAG, "Error closing stream", e);
+                    }
+                }
+            }
+
+            try {
+                return getReviews(moviesJSON);
+            } catch (Exception e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+
+        private Collection<Review> getReviews(String trailersObject)
+                throws JSONException {
+
+            final String MDB_LIST = "results";
+
+            JSONObject reviewsJSON = new JSONObject(trailersObject);
+            JSONArray reviewsArray = reviewsJSON.getJSONArray(MDB_LIST);
+
+            Collection<Review> reviews = new ArrayList<>();
+            for (int i = 0; i < reviewsArray.length(); i++) {
+                JSONObject reviewObj = reviewsArray.getJSONObject(i);
+                Review review = new Review(reviewObj);
+                reviews.add(review);
+            }
+            return reviews;
+
+        }
+
+        @Override
+        protected void onPostExecute(Collection<Review> reviews) {
+            if (reviews != null) {
+                if (reviews.size() > 0) {
+                    for (Review review : reviews) {
+                        Log.i("Review", review.getContent());
+                    }
+                }
+            }
+        }
+    }
+
 }
