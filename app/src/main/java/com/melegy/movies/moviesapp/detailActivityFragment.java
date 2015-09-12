@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,10 +28,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * A placeholder fragment containing a simple view.
- */
-public class detailActivityFragment extends Fragment {
+
+public class detailActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private Movie movie;
 
@@ -64,15 +63,30 @@ public class detailActivityFragment extends Fragment {
 
     private void setMovieData(Movie movie, View view) {
         ImageView poster_imageView = (ImageView) view.findViewById(R.id.moviePoster);
-        Picasso.with(getActivity()).load(movie.getPosterURI("w780", "backdrop")).into(poster_imageView);
+        Picasso.with(getActivity()).load(movie.getPosterURI("w500", "poster")).into(poster_imageView);
 
         TextView movie_title = (TextView) view.findViewById(R.id.movieTitle);
         movie_title.setText(movie.getTitle());
 
-        TextView overview_text = (TextView) view.findViewById(R.id.detail_overview);
-        overview_text.setText(movie.getOverview());
+        String release_date = movie.getRelease_date();
+        if (release_date.contains("-")) {
+            release_date = release_date.split("-")[0];
+        }
+
+        TextView release_year = (TextView) view.findViewById(R.id.detail_release);
+        release_year.setText(release_date);
+
+        TextView vote = (TextView) view.findViewById(R.id.detail_rating);
+        vote.setText(movie.getVote_average() + "/10");
+
+        TextView overview = (TextView) view.findViewById(R.id.detail_overview);
+        overview.setText(movie.getOverview());
 
     }
+
+    public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+    }
+
 
     public class fetchTrailersTask extends AsyncTask<Void, Void, Collection<Trailer>> {
 
@@ -184,7 +198,7 @@ public class detailActivityFragment extends Fragment {
             if (trailers != null) {
                 if (trailers.size() > 0) {
                     for (Trailer trailer : trailers) {
-                        Log.i("Trailer", trailer.getKey());
+
                     }
                 }
             }

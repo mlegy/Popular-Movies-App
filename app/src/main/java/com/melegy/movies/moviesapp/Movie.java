@@ -25,11 +25,11 @@ public class Movie implements Parcelable {
     private static final String KEY_ID = "id";
     private static final String KEY_TITLE = "title";
     private static final String KEY_OVERVIEW = "overview";
-    private static final String KEY_RELEASE_DATE = "release_date";
     private static final String KEY_POSTER = "poster_path";
     private static final String KEY_backdrop = "backdrop_path";
     private static final String KEY_VOTE_AVERAGE = "vote_average";
     private static final String KEY_VOTE_COUNT = "vote_count";
+    private static final String KEY_RELEASE_DATE = "release_date";
     private long id;
     private String title;
     private String overview;
