@@ -23,7 +23,9 @@
             android:id="@+id/trailer_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/trailer_title" />
+            android:paddingLeft="10dp"
+            android:paddingTop="30dp"
+            android:textAlignment="center" />
     </LinearLayout>
 
     <View

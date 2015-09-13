@@ -10,7 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -32,8 +36,33 @@ import java.util.Collection;
 public class detailActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private Movie movie;
+    private ListView trailersListView;
+    private ArrayAdapter<String> mTrailersNamesAdapter;
 
     public detailActivityFragment() {
+    }
+
+    private static void setListViewHeightBasedOnChildren(ListView iListView) {
+        ListAdapter listAdapter = iListView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(iListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, iListView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, RelativeLayout.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = iListView.getLayoutParams();
+        params.height = totalHeight + (iListView.getDividerHeight() * (listAdapter.getCount() - 1));
+        Log.d("TAG", "ListView Height --- " + params.height);
+        iListView.setLayoutParams(params);
+        iListView.requestLayout();
     }
 
     @Override
@@ -48,6 +77,25 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             movie = data.getParcelable("movie");
             setMovieData(movie, view);
         }
+
+        mTrailersNamesAdapter =
+                new ArrayAdapter<>(
+                        getActivity(),
+                        R.layout.list_item_trailers,
+                        R.id.trailer_title,
+                        new ArrayList<String>()
+                );
+
+        trailersListView = (ListView) view.findViewById(R.id.list_item_trailers);
+        trailersListView.setAdapter(mTrailersNamesAdapter);
+        trailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+
+            }
+        });
+
 
         return view;
     }
@@ -196,12 +244,14 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         @Override
         protected void onPostExecute(Collection<Trailer> trailers) {
             if (trailers != null) {
+                mTrailersNamesAdapter.clear();
                 if (trailers.size() > 0) {
                     for (Trailer trailer : trailers) {
-
+                        mTrailersNamesAdapter.add(trailer.getName());
                     }
                 }
             }
+            setListViewHeightBasedOnChildren(trailersListView);
         }
     }
 
