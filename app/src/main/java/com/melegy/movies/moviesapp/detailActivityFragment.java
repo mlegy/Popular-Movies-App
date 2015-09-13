@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -31,6 +32,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class detailActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
@@ -38,6 +42,11 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     private Movie movie;
     private ListView trailersListView;
     private ArrayAdapter<String> mTrailersNamesAdapter;
+    private ListView reviewsListView;
+    private ArrayList<String> mReviewsNamesAdapter = new ArrayList<>();
+    private ArrayList<Review> mReviews;
+    private ArrayList<String> mReviewsContentAdapter = new ArrayList<>();
+
 
     public detailActivityFragment() {
     }
@@ -95,6 +104,16 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
 
             }
         });
+
+//        mReviewsNamesAdapter =
+//                new ArrayAdapter<>(
+//                        getActivity(),
+//                        R.layout.list_item_reviews,
+//                        R.id.review_author,
+//                        new ArrayList<String>()
+//                );
+
+
 
 
         return view;
@@ -362,11 +381,36 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         protected void onPostExecute(Collection<Review> reviews) {
             if (reviews != null) {
                 if (reviews.size() > 0) {
+//                    mReviewsNamesAdapter.clear();
                     for (Review review : reviews) {
-                        Log.i("Review", review.getContent());
+                        mReviewsNamesAdapter.add(review.getAuthor());
+                        mReviewsContentAdapter.add(review.getContent());
+//                        mReviews.add(review);
                     }
                 }
             }
+            List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+            Map<String, String> map;
+            int count = mReviewsNamesAdapter.size();
+            for (int i = 0; i < count; i++) {
+                map = new HashMap<String, String>();
+                map.put("name", mReviewsNamesAdapter.get(i));
+                map.put("total", mReviewsContentAdapter.get(i));
+                list.add(map);
+            }
+
+            SimpleAdapter adapter = new SimpleAdapter(getActivity(), list, R.layout.list_item_reviews, new String[]{"name", "total"}, new int[]{R.id.review_author, R.id.review_content});
+
+            reviewsListView = (ListView) getActivity().findViewById(R.id.list_item_reviews);
+            reviewsListView.setAdapter(adapter);
+            reviewsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+
+                }
+            });
+            setListViewHeightBasedOnChildren(reviewsListView);
         }
     }
 
