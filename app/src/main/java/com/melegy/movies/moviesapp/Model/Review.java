@@ -1,4 +1,4 @@
-package com.melegy.movies.moviesapp;
+package com.melegy.movies.moviesapp.Model;
 
 import org.json.JSONException;
 import org.json.JSONObject;

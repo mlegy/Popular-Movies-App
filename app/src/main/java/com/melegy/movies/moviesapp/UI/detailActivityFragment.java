@@ -1,4 +1,4 @@
-package com.melegy.movies.moviesapp;
+package com.melegy.movies.moviesapp.UI;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -18,6 +18,11 @@ import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.melegy.movies.moviesapp.Model.Movie;
+import com.melegy.movies.moviesapp.Model.Review;
+import com.melegy.movies.moviesapp.Model.Trailer;
+import com.melegy.movies.moviesapp.R;
+import com.melegy.movies.moviesapp.sensitiveData;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;

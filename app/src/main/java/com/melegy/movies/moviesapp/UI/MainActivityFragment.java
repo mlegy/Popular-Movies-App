@@ -1,4 +1,4 @@
-package com.melegy.movies.moviesapp;
+package com.melegy.movies.moviesapp.UI;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +17,11 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
+
+import com.melegy.movies.moviesapp.ImageAdapter;
+import com.melegy.movies.moviesapp.Model.Movie;
+import com.melegy.movies.moviesapp.R;
+import com.melegy.movies.moviesapp.sensitiveData;
 
 import org.json.JSONArray;
 import org.json.JSONException;

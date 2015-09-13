@@ -1,7 +1,9 @@
-package com.melegy.movies.moviesapp;
+package com.melegy.movies.moviesapp.UI;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+
+import com.melegy.movies.moviesapp.R;
 
 public class MainActivity extends ActionBarActivity {
 

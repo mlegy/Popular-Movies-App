@@ -1,12 +1,12 @@
 package com.melegy.movies.moviesapp;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
+import com.melegy.movies.moviesapp.Model.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

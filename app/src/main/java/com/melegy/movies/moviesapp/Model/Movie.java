@@ -1,4 +1,4 @@
-package com.melegy.movies.moviesapp;
+package com.melegy.movies.moviesapp.Model;
 
 import android.net.Uri;
 import android.os.Parcel;
