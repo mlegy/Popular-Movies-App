@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -23,6 +22,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.melegy.movies.moviesapp.Adapters.ReviewsAdapter;
+import com.melegy.movies.moviesapp.Adapters.TrailersAdapter;
 import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.Model.Review;
 import com.melegy.movies.moviesapp.Model.Trailer;
@@ -49,10 +49,6 @@ import java.util.Set;
 public class detailActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private Movie movie;
-    private ListView trailersListView;
-    private ArrayAdapter<String> mTrailersNamesAdapter;
-    private ArrayList<Review> mReviews;
-    private ReviewsAdapter mReviewsAdapter;
 
     public detailActivityFragment() {
     }
@@ -92,24 +88,6 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             movie = data.getParcelable("movie");
             setMovieData(movie, view);
         }
-
-        mTrailersNamesAdapter =
-                new ArrayAdapter<>(
-                        getActivity(),
-                        R.layout.list_item_trailers,
-                        R.id.trailer_title,
-                        new ArrayList<String>()
-                );
-
-        trailersListView = (ListView) view.findViewById(R.id.list_item_trailers);
-        trailersListView.setAdapter(mTrailersNamesAdapter);
-        trailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
-            }
-        });
 
         Button add_bookmark = (Button) view.findViewById(R.id.favouriteButton);
         add_bookmark.setOnClickListener(new View.OnClickListener() {
@@ -296,14 +274,15 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         @Override
         protected void onPostExecute(Collection<Trailer> trailers) {
             if (trailers != null) {
-                mTrailersNamesAdapter.clear();
                 if (trailers.size() > 0) {
-                    for (Trailer trailer : trailers) {
-                        mTrailersNamesAdapter.add(trailer.getName());
-                    }
+                    ArrayList<Trailer> mTrailers = new ArrayList<>();
+                    mTrailers.addAll(trailers);
+                    TrailersAdapter mTrailersAdapter = new TrailersAdapter(getActivity(), mTrailers);
+                    ListView trailersListView = (ListView) getActivity().findViewById(R.id.list_item_trailers);
+                    trailersListView.setAdapter(mTrailersAdapter);
+                    setListViewHeightBasedOnChildren(trailersListView);
                 }
             }
-            setListViewHeightBasedOnChildren(trailersListView);
         }
     }
 
@@ -414,9 +393,9 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         protected void onPostExecute(Collection<Review> reviews) {
             if (reviews != null) {
                 if (reviews.size() > 0) {
-                    mReviews = new ArrayList<>();
+                    ArrayList<Review> mReviews = new ArrayList<>();
                     mReviews.addAll(reviews);
-                    mReviewsAdapter = new ReviewsAdapter(getActivity(), mReviews);
+                    ReviewsAdapter mReviewsAdapter = new ReviewsAdapter(getActivity(), mReviews);
                     ListView reviewsListView = (ListView) getActivity().findViewById(R.id.list_item_reviews);
                     reviewsListView.setAdapter(mReviewsAdapter);
                     setListViewHeightBasedOnChildren(reviewsListView);
