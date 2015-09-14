@@ -16,9 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.melegy.movies.moviesapp.Adapters.ReviewsAdapter;
@@ -52,29 +50,6 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     private Movie movie;
 
     public detailActivityFragment() {
-    }
-
-    private static void setListViewHeightBasedOnChildren(ListView iListView) {
-        ListAdapter listAdapter = iListView.getAdapter();
-        if (listAdapter == null)
-            return;
-
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(iListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
-        View view = null;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            view = listAdapter.getView(i, view, iListView);
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, RelativeLayout.LayoutParams.WRAP_CONTENT));
-
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
-        }
-        ViewGroup.LayoutParams params = iListView.getLayoutParams();
-        params.height = totalHeight + (iListView.getDividerHeight() * (listAdapter.getCount() - 1));
-        Log.d("TAG", "ListView Height --- " + params.height);
-        iListView.setLayoutParams(params);
-        iListView.requestLayout();
     }
 
     @Override
@@ -281,7 +256,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                     TrailersAdapter mTrailersAdapter = new TrailersAdapter(getActivity(), mTrailers);
                     ListView trailersListView = (ListView) getActivity().findViewById(R.id.list_item_trailers);
                     trailersListView.setAdapter(mTrailersAdapter);
-                    setListViewHeightBasedOnChildren(trailersListView);
+                    Utility.setListViewHeightBasedOnChildren(trailersListView);
                     trailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -410,7 +385,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                     ReviewsAdapter mReviewsAdapter = new ReviewsAdapter(getActivity(), mReviews);
                     ListView reviewsListView = (ListView) getActivity().findViewById(R.id.list_item_reviews);
                     reviewsListView.setAdapter(mReviewsAdapter);
-                    setListViewHeightBasedOnChildren(reviewsListView);
+                    Utility.setListViewHeightBasedOnChildren(reviewsListView);
                 }
             }
         }
