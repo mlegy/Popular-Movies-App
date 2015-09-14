@@ -1,8 +1,12 @@
 package com.melegy.movies.moviesapp.UI;
 
+import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -11,13 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.melegy.movies.moviesapp.Adapters.ReviewsAdapter;
 import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.Model.Review;
 import com.melegy.movies.moviesapp.Model.Trailer;
@@ -37,9 +42,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class detailActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
@@ -47,11 +51,8 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     private Movie movie;
     private ListView trailersListView;
     private ArrayAdapter<String> mTrailersNamesAdapter;
-    private ListView reviewsListView;
-    private ArrayList<String> mReviewsNamesAdapter = new ArrayList<>();
     private ArrayList<Review> mReviews;
-    private ArrayList<String> mReviewsContentAdapter = new ArrayList<>();
-
+    private ReviewsAdapter mReviewsAdapter;
 
     public detailActivityFragment() {
     }
@@ -110,18 +111,45 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             }
         });
 
-//        mReviewsNamesAdapter =
-//                new ArrayAdapter<>(
-//                        getActivity(),
-//                        R.layout.list_item_reviews,
-//                        R.id.review_author,
-//                        new ArrayList<String>()
-//                );
-
-
-
+        Button add_bookmark = (Button) view.findViewById(R.id.favouriteButton);
+        add_bookmark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addToBookmarks(movie.getId());
+            }
+        });
+        if (isFavoured(movie.getId())) {
+            add_bookmark.setText("REMOVE FROM BOOKMARKS");
+        }
 
         return view;
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private boolean isFavoured(long id) {
+        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        final Set<String> fav_str = sharedPreferences.getStringSet("favourites", null);
+        if (fav_str != null) {
+            HashSet<Long> strs = new HashSet<Long>(fav_str.size());
+            for (String str : fav_str)
+                strs.add(Long.parseLong(str));
+            if (strs.contains(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void addToBookmarks(long id) {
+
+        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        Set<String> fav = new HashSet<String>();
+        Set<String> favourites = sharedPreferences.getStringSet("favourites", fav);
+        favourites.add(String.valueOf(id));
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putStringSet("favourites", favourites);
+        editor.apply();
     }
 
     @Override
@@ -386,36 +414,14 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         protected void onPostExecute(Collection<Review> reviews) {
             if (reviews != null) {
                 if (reviews.size() > 0) {
-//                    mReviewsNamesAdapter.clear();
-                    for (Review review : reviews) {
-                        mReviewsNamesAdapter.add(review.getAuthor());
-                        mReviewsContentAdapter.add(review.getContent());
-//                        mReviews.add(review);
-                    }
+                    mReviews = new ArrayList<>();
+                    mReviews.addAll(reviews);
+                    mReviewsAdapter = new ReviewsAdapter(getActivity(), mReviews);
+                    ListView reviewsListView = (ListView) getActivity().findViewById(R.id.list_item_reviews);
+                    reviewsListView.setAdapter(mReviewsAdapter);
+                    setListViewHeightBasedOnChildren(reviewsListView);
                 }
             }
-            List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-            Map<String, String> map;
-            int count = mReviewsNamesAdapter.size();
-            for (int i = 0; i < count; i++) {
-                map = new HashMap<String, String>();
-                map.put("name", mReviewsNamesAdapter.get(i));
-                map.put("total", mReviewsContentAdapter.get(i));
-                list.add(map);
-            }
-
-            SimpleAdapter adapter = new SimpleAdapter(getActivity(), list, R.layout.list_item_reviews, new String[]{"name", "total"}, new int[]{R.id.review_author, R.id.review_content});
-
-            reviewsListView = (ListView) getActivity().findViewById(R.id.list_item_reviews);
-            reviewsListView.setAdapter(adapter);
-            reviewsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
-                }
-            });
-            setListViewHeightBasedOnChildren(reviewsListView);
         }
     }
 

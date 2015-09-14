@@ -1,4 +1,4 @@
-package com.melegy.movies.moviesapp;
+package com.melegy.movies.moviesapp.Adapters;
 
 import android.content.Context;
 import android.view.View;
@@ -7,6 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.melegy.movies.moviesapp.Model.Movie;
+import com.melegy.movies.moviesapp.SquaredImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

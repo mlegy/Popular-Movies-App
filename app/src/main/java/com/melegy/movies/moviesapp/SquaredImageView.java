@@ -7,7 +7,7 @@ import android.widget.ImageView;
 /**
  * Created by ahmad on 12/08/15.
  */
-final class SquaredImageView extends ImageView {
+public final class SquaredImageView extends ImageView {
 
     /** An image view which always remains square with respect to its width. */
         public SquaredImageView(Context context) {
