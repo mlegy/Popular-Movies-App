@@ -27,6 +27,7 @@ import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.Model.Review;
 import com.melegy.movies.moviesapp.Model.Trailer;
 import com.melegy.movies.moviesapp.R;
+import com.melegy.movies.moviesapp.Utility;
 import com.melegy.movies.moviesapp.sensitiveData;
 import com.squareup.picasso.Picasso;
 
@@ -272,15 +273,26 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         }
 
         @Override
-        protected void onPostExecute(Collection<Trailer> trailers) {
+        protected void onPostExecute(final Collection<Trailer> trailers) {
             if (trailers != null) {
                 if (trailers.size() > 0) {
-                    ArrayList<Trailer> mTrailers = new ArrayList<>();
+                    final ArrayList<Trailer> mTrailers = new ArrayList<>();
                     mTrailers.addAll(trailers);
                     TrailersAdapter mTrailersAdapter = new TrailersAdapter(getActivity(), mTrailers);
                     ListView trailersListView = (ListView) getActivity().findViewById(R.id.list_item_trailers);
                     trailersListView.setAdapter(mTrailersAdapter);
                     setListViewHeightBasedOnChildren(trailersListView);
+                    trailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            String youtubeLink = "https://www.youtube.com/watch?v=" + mTrailers.get(position).getKey();
+                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeLink));
+                            Utility.preferPackageForIntent(getActivity(), i,
+                                    Utility.YOUTUBE_PACKAGE_NAME);
+                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                            startActivity(i);
+                        }
+                    });
                 }
             }
         }
