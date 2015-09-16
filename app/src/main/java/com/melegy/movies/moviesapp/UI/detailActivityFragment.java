@@ -68,11 +68,6 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             setMovieData(movie, view);
         }
 
-        fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
-        fetchTrailersTask.execute();
-        fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
-        fetchReviewsTask.execute();
-
         Button add_bookmark = (Button) view.findViewById(R.id.favouriteButton);
         add_bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +80,14 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         }
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
+        fetchTrailersTask.execute();
+        fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
+        fetchReviewsTask.execute();
     }
 
     private boolean isFavoured(long id) {
