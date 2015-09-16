@@ -29,7 +29,9 @@ public class MovieColumns implements BaseColumns {
 
     public static final String RELEASE_DATE = "release_date";
 
-    public static final String THUMBNAIL = "thumbnail";
+    public static final String POSTER = "poster";
+
+    public static final String BACKDROP = "backdrop";
 
     public static final String IS_FAVOURITE = "is_favourite";
 
@@ -45,7 +47,8 @@ public class MovieColumns implements BaseColumns {
             VOTE_COUNT,
             POPULARITY,
             RELEASE_DATE,
-            THUMBNAIL,
+            POSTER,
+            BACKDROP,
             IS_FAVOURITE
     };
     // @formatter:on
@@ -59,7 +62,8 @@ public class MovieColumns implements BaseColumns {
             if (c.equals(VOTE_COUNT) || c.contains("." + VOTE_COUNT)) return true;
             if (c.equals(POPULARITY) || c.contains("." + POPULARITY)) return true;
             if (c.equals(RELEASE_DATE) || c.contains("." + RELEASE_DATE)) return true;
-            if (c.equals(THUMBNAIL) || c.contains("." + THUMBNAIL)) return true;
+            if (c.equals(POSTER) || c.contains("." + POSTER)) return true;
+            if (c.equals(BACKDROP) || c.contains("." + BACKDROP)) return true;
             if (c.equals(IS_FAVOURITE) || c.contains("." + IS_FAVOURITE)) return true;
         }
         return false;

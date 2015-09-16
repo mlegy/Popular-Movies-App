@@ -87,12 +87,22 @@ public class MovieCursor extends AbstractCursor implements MovieModel {
     }
 
     /**
-     * Get the {@code thumbnail} value.
+     * Get the {@code poster} value.
      * Can be {@code null}.
      */
     @Nullable
-    public String getThumbnail() {
-        String res = getStringOrNull(MovieColumns.THUMBNAIL);
+    public String getPoster() {
+        String res = getStringOrNull(MovieColumns.POSTER);
+        return res;
+    }
+
+    /**
+     * Get the {@code backdrop} value.
+     * Can be {@code null}.
+     */
+    @Nullable
+    public String getBackdrop() {
+        String res = getStringOrNull(MovieColumns.BACKDROP);
         return res;
     }
 

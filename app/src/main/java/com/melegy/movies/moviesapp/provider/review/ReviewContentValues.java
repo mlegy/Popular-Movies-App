@@ -20,7 +20,7 @@ public class ReviewContentValues extends AbstractContentValues {
      * Update row(s) using the values stored by this object and the given selection.
      *
      * @param contentResolver The content resolver to use.
-     * @param where           The selection to use (can be {@code null}).
+     * @param where The selection to use (can be {@code null}).
      */
     public int update(ContentResolver contentResolver, @Nullable ReviewSelection where) {
         return contentResolver.update(uri(), values(), where == null ? null : where.sel(), where == null ? null : where.args());
@@ -30,7 +30,7 @@ public class ReviewContentValues extends AbstractContentValues {
      * Update row(s) using the values stored by this object and the given selection.
      *
      * @param context The context to use.
-     * @param where   The selection to use (can be {@code null}).
+     * @param where The selection to use (can be {@code null}).
      */
     public int update(Context context, @Nullable ReviewSelection where) {
         return context.getContentResolver().update(uri(), values(), where == null ? null : where.sel(), where == null ? null : where.args());

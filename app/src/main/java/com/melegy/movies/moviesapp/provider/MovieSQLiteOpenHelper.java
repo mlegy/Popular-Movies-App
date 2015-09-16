@@ -26,7 +26,8 @@ public class MovieSQLiteOpenHelper extends SQLiteOpenHelper {
             + MovieColumns.VOTE_COUNT + " INTEGER, "
             + MovieColumns.POPULARITY + " REAL, "
             + MovieColumns.RELEASE_DATE + " TEXT, "
-            + MovieColumns.THUMBNAIL + " TEXT, "
+            + MovieColumns.POSTER + " TEXT, "
+            + MovieColumns.BACKDROP + " TEXT, "
             + MovieColumns.IS_FAVOURITE + " INTEGER NOT NULL DEFAULT 0 "
             + " );";
     public static final String SQL_CREATE_TABLE_REVIEW = "CREATE TABLE IF NOT EXISTS "

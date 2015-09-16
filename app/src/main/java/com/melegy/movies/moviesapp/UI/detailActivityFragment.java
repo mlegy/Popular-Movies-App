@@ -27,6 +27,8 @@ import com.melegy.movies.moviesapp.Model.Trailer;
 import com.melegy.movies.moviesapp.R;
 import com.melegy.movies.moviesapp.Utility.Utility;
 import com.melegy.movies.moviesapp.Utility.sensitiveData;
+import com.melegy.movies.moviesapp.provider.movie.MovieColumns;
+import com.melegy.movies.moviesapp.provider.movie.MovieContentValues;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -98,12 +100,24 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     private void addToBookmarks(long id) {
 
         SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        Set<String> fav = new HashSet<String>();
+        Set<String> fav = new HashSet<>();
         Set<String> favourites = sharedPreferences.getStringSet("favourites", fav);
         favourites.add(String.valueOf(id));
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putStringSet("favourites", favourites);
         editor.apply();
+
+        MovieContentValues contentValues = new MovieContentValues();
+        contentValues.putID(movie.getId());
+        contentValues.putTitle(movie.getTitle());
+        contentValues.putReleaseDate(movie.getRelease_date());
+        contentValues.putVoteAverage((float) movie.getVote_average());
+        contentValues.putOverview(movie.getOverview());
+        contentValues.putPoster(movie.getPoster_path());
+        contentValues.putVoteCount((int) movie.getVote_count());
+        contentValues.putIsFavourite(true);
+        contentValues.putBackdrop(movie.getBackdrop_path());
+        getActivity().getContentResolver().insert(MovieColumns.CONTENT_URI, contentValues.values());
     }
 
     @Override

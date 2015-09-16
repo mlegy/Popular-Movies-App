@@ -98,12 +98,22 @@ public class TrailerCursor extends AbstractCursor implements TrailerModel {
     }
 
     /**
-     * Get the {@code thumbnail} value.
+     * Get the {@code poster} value.
      * Can be {@code null}.
      */
     @Nullable
-    public String getMovieThumbnail() {
-        String res = getStringOrNull(MovieColumns.THUMBNAIL);
+    public String getMoviePoster() {
+        String res = getStringOrNull(MovieColumns.POSTER);
+        return res;
+    }
+
+    /**
+     * Get the {@code backdrop} value.
+     * Can be {@code null}.
+     */
+    @Nullable
+    public String getMovieBackdrop() {
+        String res = getStringOrNull(MovieColumns.BACKDROP);
         return res;
     }
 

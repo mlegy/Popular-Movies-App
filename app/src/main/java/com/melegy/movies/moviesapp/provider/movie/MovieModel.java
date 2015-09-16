@@ -53,11 +53,18 @@ public interface MovieModel extends BaseModel {
     String getReleaseDate();
 
     /**
-     * Get the {@code thumbnail} value.
+     * Get the {@code poster} value.
      * Can be {@code null}.
      */
     @Nullable
-    String getThumbnail();
+    String getPoster();
+
+    /**
+     * Get the {@code backdrop} value.
+     * Can be {@code null}.
+     */
+    @Nullable
+    String getBackdrop();
 
     /**
      * Get the {@code is_favourite} value.

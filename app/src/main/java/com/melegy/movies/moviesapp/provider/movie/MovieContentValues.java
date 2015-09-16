@@ -21,7 +21,7 @@ public class MovieContentValues extends AbstractContentValues {
      * Update row(s) using the values stored by this object and the given selection.
      *
      * @param contentResolver The content resolver to use.
-     * @param where           The selection to use (can be {@code null}).
+     * @param where The selection to use (can be {@code null}).
      */
     public int update(ContentResolver contentResolver, @Nullable MovieSelection where) {
         return contentResolver.update(uri(), values(), where == null ? null : where.sel(), where == null ? null : where.args());
@@ -31,10 +31,16 @@ public class MovieContentValues extends AbstractContentValues {
      * Update row(s) using the values stored by this object and the given selection.
      *
      * @param context The context to use.
-     * @param where   The selection to use (can be {@code null}).
+     * @param where The selection to use (can be {@code null}).
      */
     public int update(Context context, @Nullable MovieSelection where) {
         return context.getContentResolver().update(uri(), values(), where == null ? null : where.sel(), where == null ? null : where.args());
+    }
+
+    public MovieContentValues putID(@NonNull long value) {
+//        if (value == null) throw new IllegalArgumentException("title must not be null");
+        mContentValues.put(MovieColumns._ID, value);
+        return this;
     }
 
     public MovieContentValues putTitle(@NonNull String value) {
@@ -94,13 +100,23 @@ public class MovieContentValues extends AbstractContentValues {
         return this;
     }
 
-    public MovieContentValues putThumbnail(@Nullable String value) {
-        mContentValues.put(MovieColumns.THUMBNAIL, value);
+    public MovieContentValues putPoster(@Nullable String value) {
+        mContentValues.put(MovieColumns.POSTER, value);
         return this;
     }
 
-    public MovieContentValues putThumbnailNull() {
-        mContentValues.putNull(MovieColumns.THUMBNAIL);
+    public MovieContentValues putPosterNull() {
+        mContentValues.putNull(MovieColumns.POSTER);
+        return this;
+    }
+
+    public MovieContentValues putBackdrop(@Nullable String value) {
+        mContentValues.put(MovieColumns.BACKDROP, value);
+        return this;
+    }
+
+    public MovieContentValues putBackdropNull() {
+        mContentValues.putNull(MovieColumns.BACKDROP);
         return this;
     }
 

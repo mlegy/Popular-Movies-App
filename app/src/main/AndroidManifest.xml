@@ -9,6 +9,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <provider
+            android:name="com.melegy.movies.moviesapp.provider.MovieProvider"
+            android:authorities="com.melegy.movies.moviesapp.provider"
+            android:exported="false" />
+
         <activity
             android:name=".UI.MainActivity"
             android:label="@string/app_name" >
@@ -22,12 +28,6 @@
             android:name=".UI.detailActivity"
             android:label="@string/title_activity_detail" >
         </activity>
-
-        <provider
-            android:name="com.melegy.movies.moviesapp.provider.MovieProvider"
-            android:authorities="com.melegey.movies.moviesapp.provider"
-            android:exported="false" />
-
     </application>
 
 </manifest>

@@ -21,7 +21,7 @@ public class TrailerSelection extends AbstractSelection<TrailerSelection> {
      * Query the given content resolver using this selection.
      *
      * @param contentResolver The content resolver to query.
-     * @param projection      A list of which columns to return. Passing null will return all columns, which is inefficient.
+     * @param projection A list of which columns to return. Passing null will return all columns, which is inefficient.
      * @return A {@code TrailerCursor} object, which is positioned before the first entry, or null.
      */
     public TrailerCursor query(ContentResolver contentResolver, String[] projection) {
@@ -40,7 +40,7 @@ public class TrailerSelection extends AbstractSelection<TrailerSelection> {
     /**
      * Query the given content resolver using this selection.
      *
-     * @param context    The context to use for the query.
+     * @param context The context to use for the query.
      * @param projection A list of which columns to return. Passing null will return all columns, which is inefficient.
      * @return A {@code TrailerCursor} object, which is positioned before the first entry, or null.
      */
@@ -357,43 +357,83 @@ public class TrailerSelection extends AbstractSelection<TrailerSelection> {
         return this;
     }
 
-    public TrailerSelection movieThumbnail(String... value) {
-        addEquals(MovieColumns.THUMBNAIL, value);
+    public TrailerSelection moviePoster(String... value) {
+        addEquals(MovieColumns.POSTER, value);
         return this;
     }
 
-    public TrailerSelection movieThumbnailNot(String... value) {
-        addNotEquals(MovieColumns.THUMBNAIL, value);
+    public TrailerSelection moviePosterNot(String... value) {
+        addNotEquals(MovieColumns.POSTER, value);
         return this;
     }
 
-    public TrailerSelection movieThumbnailLike(String... value) {
-        addLike(MovieColumns.THUMBNAIL, value);
+    public TrailerSelection moviePosterLike(String... value) {
+        addLike(MovieColumns.POSTER, value);
         return this;
     }
 
-    public TrailerSelection movieThumbnailContains(String... value) {
-        addContains(MovieColumns.THUMBNAIL, value);
+    public TrailerSelection moviePosterContains(String... value) {
+        addContains(MovieColumns.POSTER, value);
         return this;
     }
 
-    public TrailerSelection movieThumbnailStartsWith(String... value) {
-        addStartsWith(MovieColumns.THUMBNAIL, value);
+    public TrailerSelection moviePosterStartsWith(String... value) {
+        addStartsWith(MovieColumns.POSTER, value);
         return this;
     }
 
-    public TrailerSelection movieThumbnailEndsWith(String... value) {
-        addEndsWith(MovieColumns.THUMBNAIL, value);
+    public TrailerSelection moviePosterEndsWith(String... value) {
+        addEndsWith(MovieColumns.POSTER, value);
         return this;
     }
 
-    public TrailerSelection orderByMovieThumbnail(boolean desc) {
-        orderBy(MovieColumns.THUMBNAIL, desc);
+    public TrailerSelection orderByMoviePoster(boolean desc) {
+        orderBy(MovieColumns.POSTER, desc);
         return this;
     }
 
-    public TrailerSelection orderByMovieThumbnail() {
-        orderBy(MovieColumns.THUMBNAIL, false);
+    public TrailerSelection orderByMoviePoster() {
+        orderBy(MovieColumns.POSTER, false);
+        return this;
+    }
+
+    public TrailerSelection movieBackdrop(String... value) {
+        addEquals(MovieColumns.BACKDROP, value);
+        return this;
+    }
+
+    public TrailerSelection movieBackdropNot(String... value) {
+        addNotEquals(MovieColumns.BACKDROP, value);
+        return this;
+    }
+
+    public TrailerSelection movieBackdropLike(String... value) {
+        addLike(MovieColumns.BACKDROP, value);
+        return this;
+    }
+
+    public TrailerSelection movieBackdropContains(String... value) {
+        addContains(MovieColumns.BACKDROP, value);
+        return this;
+    }
+
+    public TrailerSelection movieBackdropStartsWith(String... value) {
+        addStartsWith(MovieColumns.BACKDROP, value);
+        return this;
+    }
+
+    public TrailerSelection movieBackdropEndsWith(String... value) {
+        addEndsWith(MovieColumns.BACKDROP, value);
+        return this;
+    }
+
+    public TrailerSelection orderByMovieBackdrop(boolean desc) {
+        orderBy(MovieColumns.BACKDROP, desc);
+        return this;
+    }
+
+    public TrailerSelection orderByMovieBackdrop() {
+        orderBy(MovieColumns.BACKDROP, false);
         return this;
     }
 
