@@ -1,12 +1,8 @@
 package com.melegy.movies.moviesapp.UI;
 
-import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -29,6 +25,8 @@ import com.melegy.movies.moviesapp.Utility.Utility;
 import com.melegy.movies.moviesapp.Utility.sensitiveData;
 import com.melegy.movies.moviesapp.provider.movie.MovieColumns;
 import com.melegy.movies.moviesapp.provider.movie.MovieContentValues;
+import com.melegy.movies.moviesapp.provider.movie.MovieCursor;
+import com.melegy.movies.moviesapp.provider.movie.MovieSelection;
 import com.melegy.movies.moviesapp.provider.review.ReviewColumns;
 import com.melegy.movies.moviesapp.provider.review.ReviewContentValues;
 import com.melegy.movies.moviesapp.provider.trailer.TrailerColumns;
@@ -47,9 +45,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 
 public class detailActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
 
@@ -82,7 +77,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         add_bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addToBookmarks(movie.getId());
+                addToFavourites();
             }
         });
         if (isFavoured(movie.getId())) {
@@ -92,37 +87,18 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         return view;
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private boolean isFavoured(long id) {
-        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        final Set<String> fav_str = sharedPreferences.getStringSet("favourites", null);
-        if (fav_str != null) {
-            HashSet<Long> strs = new HashSet<Long>(fav_str.size());
-            for (String str : fav_str)
-                strs.add(Long.parseLong(str));
-            if (strs.contains(id)) {
-                return true;
-            }
+        MovieSelection where = new MovieSelection();
+        where.id(id);
+        MovieCursor cursor = where.query(getActivity());
+        if (cursor.moveToFirst()) {
+            return cursor.getIsFavourite();
         }
         return false;
-    }
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private void addToBookmarks(long id) {
-
-        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        Set<String> fav = new HashSet<>();
-        Set<String> favourites = sharedPreferences.getStringSet("favourites", fav);
-        favourites.add(String.valueOf(id));
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putStringSet("favourites", favourites);
-        editor.apply();
-
-        addAllToContentProvider();
 
     }
 
-    private void addAllToContentProvider() {
+    private void addToFavourites() {
         addMovieToContentProvider();
         addReviewsToContentProvider();
         addTrailersToContentProvider();
