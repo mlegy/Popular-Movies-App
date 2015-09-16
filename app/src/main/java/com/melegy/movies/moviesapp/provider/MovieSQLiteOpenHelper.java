@@ -19,7 +19,7 @@ public class MovieSQLiteOpenHelper extends SQLiteOpenHelper {
     // @formatter:off
     public static final String SQL_CREATE_TABLE_MOVIE = "CREATE TABLE IF NOT EXISTS "
             + MovieColumns.TABLE_NAME + " ( "
-            + MovieColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + MovieColumns._ID + " INTEGER PRIMARY KEY, "
             + MovieColumns.TITLE + " TEXT NOT NULL, "
             + MovieColumns.OVERVIEW + " TEXT, "
             + MovieColumns.VOTE_AVERAGE + " REAL, "

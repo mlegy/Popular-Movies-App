@@ -29,6 +29,10 @@ import com.melegy.movies.moviesapp.Utility.Utility;
 import com.melegy.movies.moviesapp.Utility.sensitiveData;
 import com.melegy.movies.moviesapp.provider.movie.MovieColumns;
 import com.melegy.movies.moviesapp.provider.movie.MovieContentValues;
+import com.melegy.movies.moviesapp.provider.review.ReviewColumns;
+import com.melegy.movies.moviesapp.provider.review.ReviewContentValues;
+import com.melegy.movies.moviesapp.provider.trailer.TrailerColumns;
+import com.melegy.movies.moviesapp.provider.trailer.TrailerContentValues;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -50,6 +54,8 @@ import java.util.Set;
 public class detailActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
 
     private Movie movie;
+    private ArrayList<Trailer> trailers;
+    private ArrayList<Review> mReviews;
 
     public detailActivityFragment() {
     }
@@ -66,6 +72,11 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             movie = data.getParcelable("movie");
             setMovieData(movie, view);
         }
+
+        fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
+        fetchTrailersTask.execute();
+        fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
+        fetchReviewsTask.execute();
 
         Button add_bookmark = (Button) view.findViewById(R.id.favouriteButton);
         add_bookmark.setOnClickListener(new View.OnClickListener() {
@@ -107,26 +118,49 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         editor.putStringSet("favourites", favourites);
         editor.apply();
 
-        MovieContentValues contentValues = new MovieContentValues();
-        contentValues.putID(movie.getId());
-        contentValues.putTitle(movie.getTitle());
-        contentValues.putReleaseDate(movie.getRelease_date());
-        contentValues.putVoteAverage((float) movie.getVote_average());
-        contentValues.putOverview(movie.getOverview());
-        contentValues.putPoster(movie.getPoster_path());
-        contentValues.putVoteCount((int) movie.getVote_count());
-        contentValues.putIsFavourite(true);
-        contentValues.putBackdrop(movie.getBackdrop_path());
-        getActivity().getContentResolver().insert(MovieColumns.CONTENT_URI, contentValues.values());
+        addAllToContentProvider();
+
     }
 
-    @Override
-    public void onStart() {
-        fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
-        fetchTrailersTask.execute();
-        fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
-        fetchReviewsTask.execute();
-        super.onStart();
+    private void addAllToContentProvider() {
+        addMovieToContentProvider();
+        addReviewsToContentProvider();
+        addTrailersToContentProvider();
+    }
+
+    private void addReviewsToContentProvider() {
+        ReviewContentValues reviewContentValues = new ReviewContentValues();
+        for (Review review : mReviews) {
+            reviewContentValues.putMovieId(movie.getId());
+            reviewContentValues.putReviewAuthor(review.getAuthor());
+            reviewContentValues.putReviewContent(review.getContent());
+            getActivity().getContentResolver().insert(ReviewColumns.CONTENT_URI, reviewContentValues.values());
+        }
+    }
+
+    private void addTrailersToContentProvider() {
+        TrailerContentValues trailerContentValues = new TrailerContentValues();
+        for (Trailer trailer : trailers) {
+            trailerContentValues.putMovieId(movie.getId());
+            trailerContentValues.putTrailerName(trailer.getName());
+            trailerContentValues.putTrailerSite(trailer.getSite());
+            trailerContentValues.putTrailerKey(trailer.getKey());
+            getActivity().getContentResolver().insert(TrailerColumns.CONTENT_URI, trailerContentValues.values());
+        }
+    }
+
+    private void addMovieToContentProvider() {
+        MovieContentValues movieContentValues = new MovieContentValues();
+        movieContentValues.putID(movie.getId());
+        movieContentValues.putTitle(movie.getTitle());
+        movieContentValues.putReleaseDate(movie.getRelease_date());
+        movieContentValues.putVoteAverage((float) movie.getVote_average());
+        movieContentValues.putOverview(movie.getOverview());
+        movieContentValues.putPoster(movie.getPoster_path());
+        movieContentValues.putVoteCount((int) movie.getVote_count());
+        movieContentValues.putIsFavourite(true);
+        movieContentValues.putBackdrop(movie.getBackdrop_path());
+        getActivity().getContentResolver().insert(MovieColumns.CONTENT_URI, movieContentValues.values());
     }
 
     private void setMovieData(Movie movie, View view) {
@@ -154,7 +188,6 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
 
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
     }
-
 
     public class fetchTrailersTask extends AsyncTask<Void, Void, Collection<Trailer>> {
 
@@ -249,7 +282,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             JSONObject trailersJSON = new JSONObject(trailersObject);
             JSONArray trailersArray = trailersJSON.getJSONArray(MDB_LIST);
 
-            Collection<Trailer> trailers = new ArrayList<>();
+            trailers = new ArrayList<>();
             for (int i = 0; i < trailersArray.length(); i++) {
                 JSONObject trailerObj = trailersArray.getJSONObject(i);
                 if (trailerObj.getString("site").contentEquals("YouTube")) {
@@ -394,7 +427,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         protected void onPostExecute(Collection<Review> reviews) {
             if (reviews != null) {
                 if (reviews.size() > 0) {
-                    ArrayList<Review> mReviews = new ArrayList<>();
+                    mReviews = new ArrayList<>();
                     mReviews.addAll(reviews);
                     ReviewsAdapter mReviewsAdapter = new ReviewsAdapter(getActivity(), mReviews);
                     ListView reviewsListView = (ListView) getActivity().findViewById(R.id.list_item_reviews);
