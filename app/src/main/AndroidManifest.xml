@@ -22,6 +22,12 @@
             android:name=".UI.detailActivity"
             android:label="@string/title_activity_detail" >
         </activity>
+
+        <provider
+            android:name="com.melegy.movies.moviesapp.provider.MovieProvider"
+            android:authorities="com.melegey.movies.moviesapp.provider"
+            android:exported="false" />
+
     </application>
 
 </manifest>

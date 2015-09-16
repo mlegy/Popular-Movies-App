@@ -7,7 +7,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.melegy.movies.moviesapp.Model.Movie;
-import com.melegy.movies.moviesapp.SquaredImageView;
+import com.melegy.movies.moviesapp.Utility.SquaredImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

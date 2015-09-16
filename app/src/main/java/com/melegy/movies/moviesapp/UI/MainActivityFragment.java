@@ -21,7 +21,7 @@ import android.widget.GridView;
 import com.melegy.movies.moviesapp.Adapters.ImageAdapter;
 import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.R;
-import com.melegy.movies.moviesapp.sensitiveData;
+import com.melegy.movies.moviesapp.Utility.sensitiveData;
 
 import org.json.JSONArray;
 import org.json.JSONException;

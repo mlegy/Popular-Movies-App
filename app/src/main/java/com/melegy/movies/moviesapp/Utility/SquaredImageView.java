@@ -1,4 +1,4 @@
-package com.melegy.movies.moviesapp;
+package com.melegy.movies.moviesapp.Utility;
 
 import android.content.Context;
 import android.util.AttributeSet;

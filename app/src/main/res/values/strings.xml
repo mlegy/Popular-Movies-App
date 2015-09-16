@@ -12,4 +12,6 @@
     <string name="mark_unfav">REMOVE FROM FAVOURITES</string>
     <string name="trailer_title">Trailer</string>
 
+    <string name="content_authority">com.melegey.movies.moviesapp</string>
+
 </resources>

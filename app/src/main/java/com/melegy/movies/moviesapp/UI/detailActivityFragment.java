@@ -25,8 +25,8 @@ import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.Model.Review;
 import com.melegy.movies.moviesapp.Model.Trailer;
 import com.melegy.movies.moviesapp.R;
-import com.melegy.movies.moviesapp.Utility;
-import com.melegy.movies.moviesapp.sensitiveData;
+import com.melegy.movies.moviesapp.Utility.Utility;
+import com.melegy.movies.moviesapp.Utility.sensitiveData;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
