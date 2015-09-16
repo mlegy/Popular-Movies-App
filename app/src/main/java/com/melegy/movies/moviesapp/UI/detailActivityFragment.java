@@ -108,23 +108,27 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     }
 
     private void addReviewsToContentProvider() {
-        ReviewContentValues reviewContentValues = new ReviewContentValues();
-        for (Review review : mReviews) {
-            reviewContentValues.putMovieId(movie.getId());
-            reviewContentValues.putReviewAuthor(review.getAuthor());
-            reviewContentValues.putReviewContent(review.getContent());
-            getActivity().getContentResolver().insert(ReviewColumns.CONTENT_URI, reviewContentValues.values());
+        if (mReviews != null) {
+            ReviewContentValues reviewContentValues = new ReviewContentValues();
+            for (Review review : mReviews) {
+                reviewContentValues.putMovieId(movie.getId());
+                reviewContentValues.putReviewAuthor(review.getAuthor());
+                reviewContentValues.putReviewContent(review.getContent());
+                getActivity().getContentResolver().insert(ReviewColumns.CONTENT_URI, reviewContentValues.values());
+            }
         }
     }
 
     private void addTrailersToContentProvider() {
-        TrailerContentValues trailerContentValues = new TrailerContentValues();
-        for (Trailer trailer : trailers) {
-            trailerContentValues.putMovieId(movie.getId());
-            trailerContentValues.putTrailerName(trailer.getName());
-            trailerContentValues.putTrailerSite(trailer.getSite());
-            trailerContentValues.putTrailerKey(trailer.getKey());
-            getActivity().getContentResolver().insert(TrailerColumns.CONTENT_URI, trailerContentValues.values());
+        if (trailers != null) {
+            TrailerContentValues trailerContentValues = new TrailerContentValues();
+            for (Trailer trailer : trailers) {
+                trailerContentValues.putMovieId(movie.getId());
+                trailerContentValues.putTrailerName(trailer.getName());
+                trailerContentValues.putTrailerSite(trailer.getSite());
+                trailerContentValues.putTrailerKey(trailer.getKey());
+                getActivity().getContentResolver().insert(TrailerColumns.CONTENT_URI, trailerContentValues.values());
+            }
         }
     }
 
