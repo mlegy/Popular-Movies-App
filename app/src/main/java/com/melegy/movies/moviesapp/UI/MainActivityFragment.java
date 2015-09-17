@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,11 +16,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.GridView;
+import android.widget.ProgressBar;
 
-import com.melegy.movies.moviesapp.Adapters.ImageAdapter;
+import com.melegy.movies.moviesapp.Adapters.MoviesAdapter;
 import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.R;
 import com.melegy.movies.moviesapp.Utility.sensitiveData;
@@ -35,18 +35,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 public class MainActivityFragment extends Fragment {
 
-    String[] posters;
-    Collection<Movie> movies;
-    int myLastVisiblePos;
-    private ImageAdapter imageAdapter;
-    private List<Movie> movies_list = new ArrayList<>();
     private int page_num = 1;
-    private GridView gridview;
+    private RecyclerView moviesRecyclerView;
+    private GridLayoutManager mStaggeredLayoutManager;
+    private MoviesAdapter adapter;
     private String sort_type;
+    private ProgressBar progressBar;
 
 
     public MainActivityFragment() {
@@ -65,44 +62,14 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        gridview = (GridView) view.findViewById(R.id.gridview);
-        imageAdapter = new ImageAdapter(getActivity());
-        gridview.setAdapter(imageAdapter);
+        moviesRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 2);
+        moviesRecyclerView.setLayoutManager(mStaggeredLayoutManager);
 
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
+        moviesRecyclerView.setAdapter(adapter);
 
-                Intent intent = new Intent(getActivity(), detailActivity.class);
-                Movie mMovie = movies_list.get(position);
-                intent.putExtra("movie", mMovie);
-                startActivity(intent);
-
-            }
-        });
-
-        myLastVisiblePos = gridview.getFirstVisiblePosition();
-
-        gridview.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                int currentFirstVisPos = view.getFirstVisiblePosition();
-                if (currentFirstVisPos > myLastVisiblePos) {
-                    Log.i("SCROLL", "DOWN");
-                }
-                if (currentFirstVisPos < myLastVisiblePos) {
-                    page_num += 1;
-                    updateView();
-                    Log.i("SCROLL", "UP");
-                }
-                myLastVisiblePos = currentFirstVisPos;
-            }
-        });
+        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.VISIBLE);
 
         return view;
     }
@@ -135,7 +102,7 @@ public class MainActivityFragment extends Fragment {
                     item.setChecked(true);
                 }
                 sort_type = getResources().getString(R.string.pref_sort_popularity);
-                reCreateView();
+                updateView();
                 return true;
             case R.id.action_sort_by_rating:
                 if (item.isChecked()) {
@@ -144,7 +111,7 @@ public class MainActivityFragment extends Fragment {
                     item.setChecked(true);
                 }
                 sort_type = getResources().getString(R.string.pref_sort_type_rating);
-                reCreateView();
+                updateView();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -159,33 +126,7 @@ public class MainActivityFragment extends Fragment {
         updateView();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        Boolean updated = settings.getBoolean("updated", false);
-        if (updated) {
-            reCreateView();
-        }
-    }
-
-    private void reCreateView() {
-        page_num = 1;
-        gridview.setAdapter(null);
-        if (movies != null) {
-            movies.clear();
-        }
-        if (movies_list != null) {
-            movies_list.clear();
-        }
-        posters = new String[0];
-        imageAdapter = new ImageAdapter(getActivity());
-        updateView();
-        gridview.setAdapter(imageAdapter);
-    }
-
     private void updateView() {
-
         fetchMoviesTask task = new fetchMoviesTask();
         task.execute(String.valueOf(page_num));
     }
@@ -297,31 +238,33 @@ public class MainActivityFragment extends Fragment {
                 Movie movie = Movie.deserialize(movieObj);
                 movies.add(movie);
             }
-            movies_list.addAll(movies);
 
             return movies;
 
         }
 
-        private String[] getPosters(Collection<Movie> movies) {
-            String poster_size = "w185";
-            String[] postersURLS = new String[movies.size()];
-            int i = 0;
-            for (Movie movie : movies) {
-                Uri poster_url = movie.getPosterURI(poster_size, "poster");
-                postersURLS[i] = poster_url.toString();
-                i++;
-            }
-            return postersURLS;
-        }
 
         @Override
-        protected void onPostExecute(Collection<Movie> movies) {
+        protected void onPostExecute(final Collection<Movie> movies) {
             if (movies != null) {
-                posters = new String[0];
-                posters = getPosters(movies);
-                imageAdapter.addPosters(posters);
+                adapter = new MoviesAdapter(getActivity(), movies);
+                moviesRecyclerView.setAdapter(adapter);
+
+                MoviesAdapter.OnItemClickListener onItemClickListener = new MoviesAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View v, int position) {
+                        Intent intent = new Intent(getActivity(), detailActivity.class);
+                        Movie mMovie = (Movie) movies.toArray()[position];
+                        intent.putExtra("movie", mMovie);
+                        startActivity(intent);
+                    }
+                };
+                adapter.setOnItemClickListener(onItemClickListener);
+
+
+
             }
+            progressBar.setVisibility(View.GONE);
         }
     }
 

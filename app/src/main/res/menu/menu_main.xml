@@ -4,9 +4,12 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/action_sort_by_popularity"
-            android:title="@string/action_sorty_popularity" />
+            android:title="@string/action_sort_popularity" />
         <item
             android:id="@+id/action_sort_by_rating"
-            android:title="@string/action_sorty_rating" />
+            android:title="@string/action_sort_rating" />
+        <item
+            android:id="@+id/action_favourites"
+            android:title="@string/action_favourites" />
     </group>
 </menu>
