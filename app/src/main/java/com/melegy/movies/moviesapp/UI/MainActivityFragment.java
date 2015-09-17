@@ -22,6 +22,8 @@ import com.melegy.movies.moviesapp.Adapters.MoviesAdapter;
 import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.R;
 import com.melegy.movies.moviesapp.Utility.sensitiveData;
+import com.melegy.movies.moviesapp.provider.movie.MovieCursor;
+import com.melegy.movies.moviesapp.provider.movie.MovieSelection;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +37,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class MainActivityFragment extends Fragment {
 
@@ -43,6 +46,7 @@ public class MainActivityFragment extends Fragment {
     private MoviesAdapter adapter;
     private String sort_type;
     private ProgressBar progressBar;
+    private boolean showFavourites;
 
     public MainActivityFragment() {
     }
@@ -97,6 +101,7 @@ public class MainActivityFragment extends Fragment {
                 } else {
                     item.setChecked(true);
                 }
+                showFavourites = false;
                 sort_type = getResources().getString(R.string.pref_sort_popularity);
                 updateView();
                 return true;
@@ -106,7 +111,17 @@ public class MainActivityFragment extends Fragment {
                 } else {
                     item.setChecked(true);
                 }
+                showFavourites = false;
                 sort_type = getResources().getString(R.string.pref_sort_type_rating);
+                updateView();
+                return true;
+            case R.id.action_favourites:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                }
+                showFavourites = true;
                 updateView();
                 return true;
             default:
@@ -123,8 +138,42 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void updateView() {
-        fetchMoviesTask task = new fetchMoviesTask();
-        task.execute(String.valueOf(page_num));
+        if (showFavourites) {
+            fetchFavouritesMovies();
+        } else {
+            fetchMoviesTask task = new fetchMoviesTask();
+            task.execute(String.valueOf(page_num));
+        }
+    }
+
+    private void setOnClickListenerOnItems(final Collection<Movie> movies) {
+        MoviesAdapter.OnItemClickListener onItemClickListener = new MoviesAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View v, int position) {
+                Intent intent = new Intent(getActivity(), detailActivity.class);
+                Movie mMovie = (Movie) movies.toArray()[position];
+                intent.putExtra("movie", mMovie);
+                startActivity(intent);
+            }
+        };
+        adapter.setOnItemClickListener(onItemClickListener);
+    }
+
+    private void fetchFavouritesMovies() {
+        MovieSelection where = new MovieSelection();
+        MovieCursor movieCursor = where.query(getActivity());
+        Movie movie;
+        List<Movie> favouriteMovies = new ArrayList<>();
+        while (movieCursor.moveToNext()) {
+            movie = new Movie(movieCursor.getId(), movieCursor.getTitle(), movieCursor.getOverview(),
+                    movieCursor.getReleaseDate(), movieCursor.getPoster(), movieCursor.getBackdrop(),
+                    movieCursor.getVoteAverage(), movieCursor.getVoteCount());
+            favouriteMovies.add(movie);
+        }
+        movieCursor.close();
+        adapter = new MoviesAdapter(getActivity(), favouriteMovies);
+        moviesRecyclerView.setAdapter(adapter);
+        setOnClickListenerOnItems(favouriteMovies);
     }
 
     public class fetchMoviesTask extends AsyncTask<String, Void, Collection<Movie>> {
@@ -245,20 +294,7 @@ public class MainActivityFragment extends Fragment {
             if (movies != null) {
                 adapter = new MoviesAdapter(getActivity(), movies);
                 moviesRecyclerView.setAdapter(adapter);
-
-                MoviesAdapter.OnItemClickListener onItemClickListener = new MoviesAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View v, int position) {
-                        Intent intent = new Intent(getActivity(), detailActivity.class);
-                        Movie mMovie = (Movie) movies.toArray()[position];
-                        intent.putExtra("movie", mMovie);
-                        startActivity(intent);
-                    }
-                };
-                adapter.setOnItemClickListener(onItemClickListener);
-
-
-
+                setOnClickListenerOnItems(movies);
             }
             progressBar.setVisibility(View.GONE);
         }

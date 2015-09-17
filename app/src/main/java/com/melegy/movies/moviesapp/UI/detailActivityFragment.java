@@ -162,7 +162,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         release_year.setText(release_date);
 
         TextView vote = (TextView) view.findViewById(R.id.detail_rating);
-        vote.setText(movie.getVote_average() + "/10");
+        vote.setText(String.format("%.1f", movie.getVote_average()) + "/10");
 
         TextView overview = (TextView) view.findViewById(R.id.detail_overview);
         overview.setText(movie.getOverview());
