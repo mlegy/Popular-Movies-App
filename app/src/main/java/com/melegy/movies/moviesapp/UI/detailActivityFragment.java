@@ -72,14 +72,25 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         add_bookmark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addToFavourites();
+                if (isFavoured()) {
+                    removeFromFavourites();
+                } else {
+                    addToFavourites();
+                }
             }
         });
-        if (isFavoured(movie.getId())) {
+        if (isFavoured()) {
             add_bookmark.setText("REMOVE FROM BOOKMARKS");
         }
 
         return view;
+    }
+
+    private void removeFromFavourites() {
+        MovieSelection where = new MovieSelection();
+        where.id(movie.getId());
+        getActivity().getContentResolver()
+                .delete(MovieColumns.CONTENT_URI, where.sel(), where.args());
     }
 
     @Override
@@ -90,9 +101,9 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         fetchReviewsTask.execute();
     }
 
-    private boolean isFavoured(long id) {
+    private boolean isFavoured() {
         MovieSelection where = new MovieSelection();
-        where.id(id);
+        where.id(movie.getId());
         MovieCursor cursor = where.query(getActivity());
         if (cursor.moveToFirst()) {
             return cursor.getIsFavourite();
