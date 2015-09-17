@@ -40,11 +40,9 @@ public class MainActivityFragment extends Fragment {
 
     private int page_num = 1;
     private RecyclerView moviesRecyclerView;
-    private GridLayoutManager mStaggeredLayoutManager;
     private MoviesAdapter adapter;
     private String sort_type;
     private ProgressBar progressBar;
-
 
     public MainActivityFragment() {
     }
@@ -63,10 +61,8 @@ public class MainActivityFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         moviesRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 2);
+        GridLayoutManager mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 2);
         moviesRecyclerView.setLayoutManager(mStaggeredLayoutManager);
-
-        moviesRecyclerView.setAdapter(adapter);
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);

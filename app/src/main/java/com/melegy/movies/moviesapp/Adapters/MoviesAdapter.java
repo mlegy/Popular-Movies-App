@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.github.florent37.picassopalette.PicassoPalette;
 import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.R;
 import com.squareup.picasso.Picasso;
@@ -46,19 +47,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                 .into(moviesViewHolder.imageView);
 
         //Setting text view title
-        moviesViewHolder.textView.setText(movie.getTitle());
-//
-//        Bitmap photo = BitmapFactory.decodeResource(
-//                context.getResources(),
-//                R.id.thumbnail);
-//
-//        Palette.generateAsync(photo, new Palette.PaletteAsyncListener() {
-//            public void onGenerated(Palette palette) {
-//                int bgColor = palette.getMutedColor(context.getResources()
-//                        .getColor(android.R.color.black));
-//                moviesViewHolder.placeNameHolder.setBackgroundColor(bgColor);
-//            }
-//        });
+        moviesViewHolder.titleView.setText(movie.getTitle());
+
+        Picasso.with(context).
+                load(movie.getPosterURI("w185", "poster"))
+                .fit()
+                .into(moviesViewHolder.imageView,
+                        PicassoPalette
+                                .with(movie.getPosterURI("w185", "poster").toString(), moviesViewHolder.imageView)
+                                .use(PicassoPalette.Profile.VIBRANT)
+                                .intoBackground(moviesViewHolder.movieTitleHolder)
+                                .intoTextColor(moviesViewHolder.titleView, PicassoPalette.Swatch.BODY_TEXT_COLOR));
     }
 
     @Override
@@ -75,18 +74,18 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     }
 
     public class MoviesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        protected LinearLayout placeHolder;
-        protected LinearLayout placeNameHolder;
+        protected LinearLayout movieHolder;
+        protected LinearLayout movieTitleHolder;
         protected ImageView imageView;
-        protected TextView textView;
+        protected TextView titleView;
 
         public MoviesViewHolder(View view) {
             super(view);
-            this.placeHolder = (LinearLayout) view.findViewById(R.id.mainHolder);
-            this.placeNameHolder = (LinearLayout) view.findViewById(R.id.placeNameHolder);
+            this.movieHolder = (LinearLayout) view.findViewById(R.id.mainHolder);
+            this.movieTitleHolder = (LinearLayout) view.findViewById(R.id.placeNameHolder);
             this.imageView = (ImageView) view.findViewById(R.id.thumbnail);
-            this.textView = (TextView) view.findViewById(R.id.title);
-            this.placeHolder.setOnClickListener(this);
+            this.titleView = (TextView) view.findViewById(R.id.title);
+            this.movieHolder.setOnClickListener(this);
         }
 
         @Override
