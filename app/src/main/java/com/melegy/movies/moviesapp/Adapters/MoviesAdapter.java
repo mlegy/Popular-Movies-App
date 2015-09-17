@@ -81,8 +81,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
         public MoviesViewHolder(View view) {
             super(view);
-            this.movieHolder = (LinearLayout) view.findViewById(R.id.mainHolder);
-            this.movieTitleHolder = (LinearLayout) view.findViewById(R.id.placeNameHolder);
+            this.movieHolder = (LinearLayout) view.findViewById(R.id.movieHolder);
+            this.movieTitleHolder = (LinearLayout) view.findViewById(R.id.movieTitleHolder);
             this.imageView = (ImageView) view.findViewById(R.id.thumbnail);
             this.titleView = (TextView) view.findViewById(R.id.title);
             this.movieHolder.setOnClickListener(this);
@@ -94,9 +94,5 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                 mItemClickListener.onItemClick(itemView, getPosition());
             }
         }
-
-//        public int getImageResourceId(Context context) {
-//            return context.getResources().getIdentifier(this.imageView, "drawable", context.getPackageName());
-//        }
     }
 }

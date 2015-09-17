@@ -16,14 +16,14 @@
 
     <!-- Used for the ripple effect on touch -->
     <LinearLayout
-        android:id="@+id/mainHolder"
+        android:id="@+id/movieHolder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?android:selectableItemBackground"
         android:orientation="horizontal" />
 
     <LinearLayout
-        android:id="@+id/placeNameHolder"
+        android:id="@+id/movieTitleHolder"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_gravity="bottom"
