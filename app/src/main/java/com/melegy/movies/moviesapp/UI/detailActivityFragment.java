@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -86,6 +87,17 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         fetchTrailersTask.execute();
         fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
         fetchReviewsTask.execute();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                getActivity().supportFinishAfterTransition();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setMovieData(Movie movie, View view) {

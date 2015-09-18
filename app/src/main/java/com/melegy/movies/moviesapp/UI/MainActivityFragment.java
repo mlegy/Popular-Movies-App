@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,8 +19,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.ToggleButton;
+import android.widget.TextView;
 
 import com.melegy.movies.moviesapp.Adapters.MoviesAdapter;
 import com.melegy.movies.moviesapp.Model.Movie;
@@ -75,9 +79,6 @@ public class MainActivityFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
 
         final Utility utility = new Utility(getActivity());
-        final ToggleButton add_bookmark = (ToggleButton) view.findViewById(R.id.favouriteButton);
-
-
 
         return view;
     }
@@ -161,7 +162,19 @@ public class MainActivityFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), detailActivity.class);
                 Movie mMovie = (Movie) movies.toArray()[position];
                 intent.putExtra("movie", mMovie);
-                startActivity(intent);
+                // Check if we're running on Android 5.0 or higher
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ImageView moviePoster = (ImageView) getActivity().findViewById(R.id.thumbnail);
+                    TextView movieTitle = (TextView) getActivity().findViewById(R.id.title);
+                    Pair<View, String> p1 = Pair.create((View) moviePoster, "movie_poster");
+                    Pair<View, String> p2 = Pair.create((View) movieTitle, "movie_title");
+                    ActivityOptionsCompat options = ActivityOptionsCompat.
+                            makeSceneTransitionAnimation(getActivity(), p1, p2);
+                    getActivity().startActivity(intent, options.toBundle());
+
+                } else {
+                    startActivity(intent);
+                }
             }
         };
         adapter.setOnItemClickListener(onItemClickListener);

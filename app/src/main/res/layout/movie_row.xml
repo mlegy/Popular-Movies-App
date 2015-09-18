@@ -12,7 +12,8 @@
         android:id="@+id/thumbnail"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        android:transitionName="movie_poster" />
 
     <!-- Used for the ripple effect on touch -->
     <LinearLayout
@@ -37,7 +38,8 @@
             android:gravity="left"
             android:paddingLeft="10dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/white"
+            android:transitionName="movie_title" />
 
         <RelativeLayout
             android:layout_width="match_parent"
