@@ -17,10 +17,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.ToggleButton;
 
 import com.melegy.movies.moviesapp.Adapters.MoviesAdapter;
 import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.R;
+import com.melegy.movies.moviesapp.Utility.Utility;
 import com.melegy.movies.moviesapp.Utility.sensitiveData;
 import com.melegy.movies.moviesapp.provider.movie.MovieCursor;
 import com.melegy.movies.moviesapp.provider.movie.MovieSelection;
@@ -47,6 +49,7 @@ public class MainActivityFragment extends Fragment {
     private String sort_type;
     private ProgressBar progressBar;
     private boolean showFavourites;
+    private ArrayList<Movie> movies;
 
     public MainActivityFragment() {
     }
@@ -70,6 +73,11 @@ public class MainActivityFragment extends Fragment {
 
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
+
+        final Utility utility = new Utility(getActivity());
+        final ToggleButton add_bookmark = (ToggleButton) view.findViewById(R.id.favouriteButton);
+
+
 
         return view;
     }
@@ -277,7 +285,7 @@ public class MainActivityFragment extends Fragment {
             JSONObject forecastJson = new JSONObject(moviesJSON);
             JSONArray moviesArray = forecastJson.getJSONArray(MDB_LIST);
 
-            Collection<Movie> movies = new ArrayList<>();
+            movies = new ArrayList<>();
             for (int i = 0; i < moviesArray.length(); i++) {
                 JSONObject movieObj = moviesArray.getJSONObject(i);
                 Movie movie = Movie.deserialize(movieObj);

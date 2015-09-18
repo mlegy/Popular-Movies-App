@@ -24,14 +24,6 @@ import com.melegy.movies.moviesapp.Model.Trailer;
 import com.melegy.movies.moviesapp.R;
 import com.melegy.movies.moviesapp.Utility.Utility;
 import com.melegy.movies.moviesapp.Utility.sensitiveData;
-import com.melegy.movies.moviesapp.provider.movie.MovieColumns;
-import com.melegy.movies.moviesapp.provider.movie.MovieContentValues;
-import com.melegy.movies.moviesapp.provider.movie.MovieCursor;
-import com.melegy.movies.moviesapp.provider.movie.MovieSelection;
-import com.melegy.movies.moviesapp.provider.review.ReviewColumns;
-import com.melegy.movies.moviesapp.provider.review.ReviewContentValues;
-import com.melegy.movies.moviesapp.provider.trailer.TrailerColumns;
-import com.melegy.movies.moviesapp.provider.trailer.TrailerContentValues;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -69,16 +61,17 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             setMovieData(movie, view);
         }
 
+        final Utility utility = new Utility(getActivity());
         final ToggleButton add_bookmark = (ToggleButton) view.findViewById(R.id.favouriteButton);
-        add_bookmark.setChecked(isFavoured());
+        add_bookmark.setChecked(utility.isFavoured(movie.getId()));
         add_bookmark.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
                 if (isChecked) {
-                    addToFavourites();
+                    utility.addToFavourites(movie, mReviews, trailers);
                 } else {
-                    if (isFavoured()) {
-                        removeFromFavourites();
+                    if (utility.isFavoured(movie.getId())) {
+                        utility.removeFromFavourites(movie.getId());
                     }
                 }
             }
@@ -87,75 +80,12 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         return view;
     }
 
-    private void removeFromFavourites() {
-        MovieSelection where = new MovieSelection();
-        where.id(movie.getId());
-        getActivity().getContentResolver()
-                .delete(MovieColumns.CONTENT_URI, where.sel(), where.args());
-    }
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
         fetchTrailersTask.execute();
         fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
         fetchReviewsTask.execute();
-    }
-
-    private boolean isFavoured() {
-        MovieSelection where = new MovieSelection();
-        where.id(movie.getId());
-        MovieCursor cursor = where.query(getActivity());
-        if (cursor.moveToFirst()) {
-            return cursor.getIsFavourite();
-        }
-        return false;
-
-    }
-
-    private void addToFavourites() {
-        addMovieToContentProvider();
-        addReviewsToContentProvider();
-        addTrailersToContentProvider();
-    }
-
-    private void addReviewsToContentProvider() {
-        if (mReviews != null) {
-            ReviewContentValues reviewContentValues = new ReviewContentValues();
-            for (Review review : mReviews) {
-                reviewContentValues.putMovieId(movie.getId());
-                reviewContentValues.putReviewAuthor(review.getAuthor());
-                reviewContentValues.putReviewContent(review.getContent());
-                getActivity().getContentResolver().insert(ReviewColumns.CONTENT_URI, reviewContentValues.values());
-            }
-        }
-    }
-
-    private void addTrailersToContentProvider() {
-        if (trailers != null) {
-            TrailerContentValues trailerContentValues = new TrailerContentValues();
-            for (Trailer trailer : trailers) {
-                trailerContentValues.putMovieId(movie.getId());
-                trailerContentValues.putTrailerName(trailer.getName());
-                trailerContentValues.putTrailerSite(trailer.getSite());
-                trailerContentValues.putTrailerKey(trailer.getKey());
-                getActivity().getContentResolver().insert(TrailerColumns.CONTENT_URI, trailerContentValues.values());
-            }
-        }
-    }
-
-    private void addMovieToContentProvider() {
-        MovieContentValues movieContentValues = new MovieContentValues();
-        movieContentValues.putID(movie.getId());
-        movieContentValues.putTitle(movie.getTitle());
-        movieContentValues.putReleaseDate(movie.getRelease_date());
-        movieContentValues.putVoteAverage((float) movie.getVote_average());
-        movieContentValues.putOverview(movie.getOverview());
-        movieContentValues.putPoster(movie.getPoster_path());
-        movieContentValues.putVoteCount((int) movie.getVote_count());
-        movieContentValues.putIsFavourite(true);
-        movieContentValues.putBackdrop(movie.getBackdrop_path());
-        getActivity().getContentResolver().insert(MovieColumns.CONTENT_URI, movieContentValues.values());
     }
 
     private void setMovieData(Movie movie, View view) {
