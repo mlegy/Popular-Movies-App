@@ -10,10 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.melegy.movies.moviesapp.Adapters.ReviewsAdapter;
 import com.melegy.movies.moviesapp.Adapters.TrailersAdapter;
@@ -68,20 +69,20 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             setMovieData(movie, view);
         }
 
-        Button add_bookmark = (Button) view.findViewById(R.id.favouriteButton);
-        add_bookmark.setOnClickListener(new View.OnClickListener() {
+        final ToggleButton add_bookmark = (ToggleButton) view.findViewById(R.id.favouriteButton);
+        add_bookmark.setChecked(isFavoured());
+        add_bookmark.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                if (isFavoured()) {
-                    removeFromFavourites();
-                } else {
+            public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
+                if (isChecked) {
                     addToFavourites();
+                } else {
+                    if (isFavoured()) {
+                        removeFromFavourites();
+                    }
                 }
             }
         });
-        if (isFavoured()) {
-            add_bookmark.setText("REMOVE FROM BOOKMARKS");
-        }
 
         return view;
     }
