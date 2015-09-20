@@ -47,15 +47,18 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         moviesViewHolder.favouriteButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
-                if (isChecked) {
-                    Utility.addToFavourites(movie, null, null);
-                } else {
-                    if (Utility.isFavoured(movie.getId())) {
-                        Utility.removeFromFavourites(movie.getId());
+                if (moviesViewHolder.favouriteButton.isPressed()) {
+                    if (isChecked) {
+                        Utility.addToFavourites(movie, null, null);
+                    } else {
+                        if (Utility.isFavoured(movie.getId())) {
+                            Utility.removeFromFavourites(movie.getId());
+                        }
+                    }
                     }
                 }
-            }
         });
+
         //Download image using picasso library
         Picasso.with(context)
                 .load(movie.getPosterURI("w185", "poster"))
