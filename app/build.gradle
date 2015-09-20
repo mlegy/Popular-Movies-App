@@ -32,4 +32,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.github.florent37:picassopalette:1.0.2@aar'
     compile 'com.android.support:palette-v7:23.0.1'
+    compile 'com.rockerhieu:rv-adapter-endless:1.1'
 }

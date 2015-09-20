@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import com.melegy.movies.moviesapp.Utility.Utility;
 import com.melegy.movies.moviesapp.Utility.sensitiveData;
 import com.melegy.movies.moviesapp.provider.movie.MovieCursor;
 import com.melegy.movies.moviesapp.provider.movie.MovieSelection;
+import com.rockerhieu.rvadapter.endless.EndlessRecyclerViewAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,18 +47,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements EndlessRecyclerViewAdapter.RequestToLoadMoreListener {
 
-    private int page_num = 1;
+    Collection<Movie> all_movies = new ArrayList<>();
+    private int page_num = 0;
     private RecyclerView moviesRecyclerView;
     private MoviesAdapter adapter;
     private String sort_type;
     private ProgressBar progressBar;
     private boolean showFavourites;
-    private ArrayList<Movie> movies;
-
-    public MainActivityFragment() {
-    }
+    private EndlessRecyclerViewAdapter endlessRecyclerViewAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,12 +69,19 @@ public class MainActivityFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        Log.i("FAV", "ONCREATEVIEW");
+        final View view = inflater.inflate(R.layout.fragment_main, container, false);
+        adapter = new MoviesAdapter(getActivity(), null);
 
         moviesRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        GridLayoutManager mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 2);
+        final LinearLayoutManager mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 2);
+
         moviesRecyclerView.setLayoutManager(mStaggeredLayoutManager);
 
+        moviesRecyclerView.setHasFixedSize(true);
+        adapter = new MoviesAdapter(getActivity(), null);
+        endlessRecyclerViewAdapter = new EndlessRecyclerViewAdapter(getActivity(), adapter, this);
+        moviesRecyclerView.setAdapter(endlessRecyclerViewAdapter);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
 
@@ -109,6 +116,9 @@ public class MainActivityFragment extends Fragment {
                     item.setChecked(false);
                 } else {
                     item.setChecked(true);
+                    all_movies.clear();
+                    adapter.clear();
+                    page_num = 1;
                 }
                 showFavourites = false;
                 sort_type = getResources().getString(R.string.pref_sort_popularity);
@@ -119,6 +129,9 @@ public class MainActivityFragment extends Fragment {
                     item.setChecked(false);
                 } else {
                     item.setChecked(true);
+                    all_movies.clear();
+                    adapter.clear();
+                    page_num = 1;
                 }
                 showFavourites = false;
                 sort_type = getResources().getString(R.string.pref_sort_type_rating);
@@ -131,6 +144,9 @@ public class MainActivityFragment extends Fragment {
                     item.setChecked(true);
                 }
                 showFavourites = true;
+                all_movies.clear();
+                adapter.clear();
+                page_num = 1;
                 updateView();
                 return true;
             default:
@@ -138,15 +154,8 @@ public class MainActivityFragment extends Fragment {
         }
     }
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        page_num = 1;
-        updateView();
-    }
-
     private void updateView() {
+        Log.i("FAV", "UPDATE-_-");
         if (showFavourites) {
             fetchFavouritesMovies();
         } else {
@@ -160,7 +169,12 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(View v, int position) {
                 Intent intent = new Intent(getActivity(), detailActivity.class);
-                Movie mMovie = (Movie) movies.toArray()[position];
+                Movie mMovie;
+                if (showFavourites) {
+                    mMovie = (Movie) movies.toArray()[position];
+                } else {
+                    mMovie = (Movie) all_movies.toArray()[position];
+                }
                 intent.putExtra("movie", mMovie);
                 // Check if we're running on Android 5.0 or higher
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -181,6 +195,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     private void fetchFavouritesMovies() {
+        Log.i("FAV", "GOT IT");
         MovieSelection where = new MovieSelection();
         MovieCursor movieCursor = where.query(getActivity());
         Movie movie;
@@ -190,11 +205,21 @@ public class MainActivityFragment extends Fragment {
                     movieCursor.getReleaseDate(), movieCursor.getPoster(), movieCursor.getBackdrop(),
                     movieCursor.getVoteAverage(), movieCursor.getVoteCount());
             favouriteMovies.add(movie);
+            Log.i("FAV", movie.getTitle());
         }
+        Log.i("FAV", favouriteMovies.size() + "");
         movieCursor.close();
-        adapter = new MoviesAdapter(getActivity(), favouriteMovies);
-        moviesRecyclerView.setAdapter(adapter);
+        adapter.addMovies(favouriteMovies);
         setOnClickListenerOnItems(favouriteMovies);
+    }
+
+    @Override
+    public void onLoadMoreRequested() {
+        if (!showFavourites) {
+            Log.i("FAV", "ONLOAD-_-");
+            page_num += 1;
+            updateView();
+        }
     }
 
     public class fetchMoviesTask extends AsyncTask<String, Void, Collection<Movie>> {
@@ -237,7 +262,6 @@ public class MainActivityFragment extends Fragment {
 
                 String myUrl = builder.build().toString();
                 URL url = new URL(myUrl);
-                Log.i("TYPE", sort_type);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
                 urlConnection.connect();
@@ -298,7 +322,7 @@ public class MainActivityFragment extends Fragment {
             JSONObject forecastJson = new JSONObject(moviesJSON);
             JSONArray moviesArray = forecastJson.getJSONArray(MDB_LIST);
 
-            movies = new ArrayList<>();
+            ArrayList<Movie> movies = new ArrayList<>();
             for (int i = 0; i < moviesArray.length(); i++) {
                 JSONObject movieObj = moviesArray.getJSONObject(i);
                 Movie movie = Movie.deserialize(movieObj);
@@ -313,11 +337,18 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected void onPostExecute(final Collection<Movie> movies) {
             if (movies != null) {
-                adapter = new MoviesAdapter(getActivity(), movies);
-                moviesRecyclerView.setAdapter(adapter);
-                setOnClickListenerOnItems(movies);
+                all_movies.addAll(movies);
+//                if (page_num == 1) {
+//                    adapter = new MoviesAdapter(getActivity(),movies);
+//                }else {
+//                    adapter.addMovies(movies);
+//                }
+                adapter.addMovies(movies);
+                endlessRecyclerViewAdapter.onDataReady(true);
+                setOnClickListenerOnItems(all_movies);
             }
             progressBar.setVisibility(View.GONE);
+            adapter.notifyDataSetChanged();
         }
     }
 

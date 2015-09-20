@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -83,6 +84,8 @@ public class Utility {
         where.id(movieID);
         context.getContentResolver()
                 .delete(MovieColumns.CONTENT_URI, where.sel(), where.args());
+        Log.d("Favourites", "Movie: " + movieID + " is removed to favourites");
+
     }
 
     public static void addToFavourites(Movie movie, ArrayList<Review> reviews, ArrayList<Trailer> trailers) {
@@ -97,6 +100,7 @@ public class Utility {
                 addTrailerToContentProvider(movie.getId(), trailer);
             }
         }
+        Log.d("Favourites", movie.getTitle() + "is added to favourites");
     }
 
     public static void addReviewToContentProvider(Long movieID, Review review) {

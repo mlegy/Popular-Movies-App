@@ -80,6 +80,21 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         return (null != movies ? movies.size() : 0);
     }
 
+    public void addMovies(Collection<Movie> movies) {
+        if (this.movies == null) {
+            this.movies = movies;
+        } else {
+            this.movies.addAll(movies);
+        }
+    }
+
+    public void clear() {
+        if (this.movies != null) {
+            int size = this.movies.size();
+            this.movies.clear();
+            this.notifyItemRangeRemoved(0, size);
+        }
+    }
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mItemClickListener = mItemClickListener;
     }
