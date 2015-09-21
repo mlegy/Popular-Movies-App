@@ -51,7 +51,6 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
 
     Collection<Movie> all_movies = new ArrayList<>();
     private int page_num = 0;
-    private RecyclerView moviesRecyclerView;
     private MoviesAdapter adapter;
     private String sort_type;
     private ProgressBar progressBar;
@@ -69,11 +68,10 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i("FAV", "ONCREATEVIEW");
         final View view = inflater.inflate(R.layout.fragment_main, container, false);
         adapter = new MoviesAdapter(getActivity(), null);
 
-        moviesRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        RecyclerView moviesRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         final LinearLayoutManager mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 2);
 
         moviesRecyclerView.setLayoutManager(mStaggeredLayoutManager);
@@ -142,11 +140,10 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                     item.setChecked(false);
                 } else {
                     item.setChecked(true);
+                    showFavourites = true;
+                    all_movies.clear();
+                    adapter.clear();
                 }
-                showFavourites = true;
-                all_movies.clear();
-                adapter.clear();
-                page_num = 1;
                 updateView();
                 return true;
             default:
@@ -155,7 +152,6 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     }
 
     private void updateView() {
-        Log.i("FAV", "UPDATE-_-");
         if (showFavourites) {
             fetchFavouritesMovies();
         } else {
@@ -195,7 +191,6 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     }
 
     private void fetchFavouritesMovies() {
-        Log.i("FAV", "GOT IT");
         MovieSelection where = new MovieSelection();
         MovieCursor movieCursor = where.query(getActivity());
         Movie movie;
@@ -205,18 +200,17 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                     movieCursor.getReleaseDate(), movieCursor.getPoster(), movieCursor.getBackdrop(),
                     movieCursor.getVoteAverage(), movieCursor.getVoteCount());
             favouriteMovies.add(movie);
-            Log.i("FAV", movie.getTitle());
         }
-        Log.i("FAV", favouriteMovies.size() + "");
         movieCursor.close();
         adapter.addMovies(favouriteMovies);
+        endlessRecyclerViewAdapter.onDataReady(true);
+        adapter.notifyDataSetChanged();
         setOnClickListenerOnItems(favouriteMovies);
     }
 
     @Override
     public void onLoadMoreRequested() {
         if (!showFavourites) {
-            Log.i("FAV", "ONLOAD-_-");
             page_num += 1;
             updateView();
         }
@@ -338,11 +332,6 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         protected void onPostExecute(final Collection<Movie> movies) {
             if (movies != null) {
                 all_movies.addAll(movies);
-//                if (page_num == 1) {
-//                    adapter = new MoviesAdapter(getActivity(),movies);
-//                }else {
-//                    adapter.addMovies(movies);
-//                }
                 adapter.addMovies(movies);
                 endlessRecyclerViewAdapter.onDataReady(true);
                 setOnClickListenerOnItems(all_movies);
