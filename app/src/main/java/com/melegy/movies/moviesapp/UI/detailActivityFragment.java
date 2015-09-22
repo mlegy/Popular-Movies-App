@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -238,20 +238,37 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                     final ArrayList<Trailer> mTrailers = new ArrayList<>();
                     mTrailers.addAll(trailers);
                     TrailersAdapter mTrailersAdapter = new TrailersAdapter(getActivity(), mTrailers);
-                    ListView trailersListView = (ListView) getActivity().findViewById(R.id.list_item_trailers);
-                    trailersListView.setAdapter(mTrailersAdapter);
-                    Utility.setListViewHeightBasedOnChildren(trailersListView);
-                    trailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            String youtubeLink = "https://www.youtube.com/watch?v=" + mTrailers.get(position).getKey();
-                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeLink));
-                            Utility.preferPackageForIntent(getActivity(), i,
-                                    Utility.YOUTUBE_PACKAGE_NAME);
-                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                            startActivity(i);
-                        }
-                    });
+                    LinearLayout trailersListView = (LinearLayout) getActivity().findViewById(R.id.list_item_trailers);
+
+                    for (int i = 0; i < mTrailersAdapter.getCount(); i++) {
+                        View view = mTrailersAdapter.getView(i, null, null);
+                        final int finalI = i;
+                        view.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String youtubeLink = "https://www.youtube.com/watch?v=" + mTrailers.get(finalI).getKey();
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeLink));
+                                Utility.preferPackageForIntent(getActivity(), intent,
+                                        Utility.YOUTUBE_PACKAGE_NAME);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                                startActivity(intent);
+                            }
+                        });
+                        trailersListView.addView(view);
+                    }
+
+//                    trailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//                        @Override
+//                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                            String youtubeLink = "https://www.youtube.com/watch?v=" + mTrailers.get(position).getKey();
+//                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeLink));
+//                            Utility.preferPackageForIntent(getActivity(), i,
+//                                    Utility.YOUTUBE_PACKAGE_NAME);
+//                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+//                            startActivity(i);
+//                        }
+//                    });
+
                 }
             }
         }
@@ -367,9 +384,11 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                     mReviews = new ArrayList<>();
                     mReviews.addAll(reviews);
                     ReviewsAdapter mReviewsAdapter = new ReviewsAdapter(getActivity(), mReviews);
-                    ListView reviewsListView = (ListView) getActivity().findViewById(R.id.list_item_reviews);
-                    reviewsListView.setAdapter(mReviewsAdapter);
-                    Utility.setListViewHeightBasedOnChildren(reviewsListView);
+                    LinearLayout reviewsListView = (LinearLayout) getActivity().findViewById(R.id.list_item_reviews);
+                    for (int i = 0; i < mReviewsAdapter.getCount(); i++) {
+                        View view = mReviewsAdapter.getView(i, null, null);
+                        reviewsListView.addView(view);
+                    }
                 }
             }
         }

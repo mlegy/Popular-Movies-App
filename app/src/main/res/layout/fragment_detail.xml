@@ -5,22 +5,20 @@
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/detail_movie_header">
+            android:layout_height="match_parent"
+            android:background="@color/detail_movie_header"
+            android:paddingTop="15dp">
 
             <TextView
                 android:id="@+id/movieTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="15dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="5dp"
-                android:paddingTop="15dp"
+                android:padding="15dp"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="@android:color/white"
                 android:transitionName="movie_title" />
@@ -29,7 +27,7 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="horizontal"
             android:paddingTop="5dp">
 
@@ -37,25 +35,27 @@
                 android:id="@+id/moviePoster"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
+                android:padding="15dp"
                 android:transitionName="movie_poster" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <LinearLayout
                     android:id="@+id/details_layout"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:paddingLeft="40dp">
+                    android:paddingLeft="40dp"
+                    android:paddingTop="15dp">
 
                     <TextView
                         android:id="@+id/detail_release"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingBottom="30dp"
                         android:textAppearance="?android:textAppearanceLarge"
                         android:textColor="@color/detail_text" />
 
@@ -71,8 +71,9 @@
 
                 <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="75dp">
+                    android:layout_height="match_parent"
+                    android:paddingLeft="75dp"
+                    android:paddingTop="45dp">
 
                     <ToggleButton
                         android:id="@+id/favouriteButton"
@@ -90,55 +91,60 @@
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/detail_overview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="20dp"
-                android:paddingLeft="20dp"
-                android:paddingTop="20dp"
+                android:padding="15dp"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/detail_text" />
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="2dip"
-                android:background="@color/detail_text" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="15dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:text="Trailers"
+                android:textAppearance="?android:textAppearanceLarge" />
+
+
+            <LinearLayout
+                android:id="@+id/list_item_trailers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"></LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Trailers"
+                android:padding="15dp"
+                android:text="Reviews"
                 android:textAppearance="?android:textAppearanceLarge" />
 
-            <ListView
-                android:id="@+id/list_item_trailers"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:divider="@null" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <ListView
+            <LinearLayout
                 android:id="@+id/list_item_reviews"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:divider="@null" />
+                android:orientation="vertical">
+
+            </LinearLayout>
 
         </LinearLayout>
 
