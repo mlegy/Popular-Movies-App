@@ -2,12 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:clickable="true"
+    android:orientation="vertical"
+    android:paddingBottom="5dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp">
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -16,21 +22,27 @@
             <ImageView
                 android:id="@+id/trailer_thumbnail"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/trailer_thumbnail_description" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_play_arrow" />
         </FrameLayout>
 
         <TextView
             android:id="@+id/trailer_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingTop="30dp"
+            android:padding="15dp"
             android:textAlignment="center" />
     </LinearLayout>
 
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dip"
-        android:background="@android:color/black" />
+        android:background="@android:color/darker_gray" />
 
 </LinearLayout>

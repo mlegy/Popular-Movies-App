@@ -3,82 +3,83 @@
     android:layout_height="fill_parent"
     android:focusableInTouchMode="true">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <LinearLayout
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/detail_movie_header"
-            android:paddingTop="15dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/movieTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="@android:color/white"
-                android:transitionName="movie_title" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/detail_movie_header"
+                android:paddingTop="15dp">
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/movieTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@android:color/white"
+                    android:transitionName="movie_title" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:paddingTop="5dp">
-
-            <ImageView
-                android:id="@+id/moviePoster"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:transitionName="movie_poster" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingTop="5dp">
 
-                <LinearLayout
-                    android:id="@+id/details_layout"
+                <ImageView
+                    android:id="@+id/moviePoster"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:paddingLeft="40dp"
-                    android:paddingTop="15dp">
-
-                    <TextView
-                        android:id="@+id/detail_release"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="30dp"
-                        android:textAppearance="?android:textAppearanceLarge"
-                        android:textColor="@color/detail_text" />
-
-                    <TextView
-                        android:id="@+id/detail_rating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:textAppearanceSmall"
-                        android:textColor="@android:color/black"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:transitionName="movie_poster" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:paddingLeft="75dp"
-                    android:paddingTop="45dp">
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/details_layout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:paddingLeft="40dp"
+                        android:paddingTop="15dp">
+
+                        <TextView
+                            android:id="@+id/detail_release"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingBottom="30dp"
+                            android:textAppearance="?android:textAppearanceLarge"
+                            android:textColor="@color/detail_text" />
+
+                        <TextView
+                            android:id="@+id/detail_rating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:textAppearanceSmall"
+                            android:textColor="@android:color/black"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
 
                     <ToggleButton
                         android:id="@+id/favouriteButton"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginTop="30dp"
                         android:background="@drawable/fav_click_selector"
                         android:textOff=""
                         android:textOn="" />
@@ -87,66 +88,68 @@
 
             </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/detail_overview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/detail_text" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="15dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:text="Trailers"
-                android:textAppearance="?android:textAppearanceLarge" />
-
-
             <LinearLayout
-                android:id="@+id/list_item_trailers"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"></LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:text="Reviews"
-                android:textAppearance="?android:textAppearanceLarge" />
-
-            <LinearLayout
-                android:id="@+id/list_item_reviews"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/detail_overview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:textAppearance="?android:textAppearanceMedium"
+                    android:textColor="@color/detail_text" />
 
             </LinearLayout>
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="15dp">
 
-    </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="15dp"
+                    android:text="Trailers"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@color/detail_movie_header" />
+
+
+                <LinearLayout
+                    android:id="@+id/list_item_trailers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="15dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="15dp"
+                    android:text="Reviews"
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="@color/detail_movie_header" />
+
+                <LinearLayout
+                    android:id="@+id/list_item_reviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
 </ScrollView>

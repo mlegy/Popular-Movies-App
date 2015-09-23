@@ -2,31 +2,36 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingBottom="5dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="15dp">
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dip"
-            android:background="@android:color/black" />
+        android:paddingBottom="10dp">
 
         <TextView
             android:id="@+id/review_author"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="15dp" />
+            android:paddingBottom="5dp"
+            android:textAppearance="?android:textAppearanceMedium" />
 
         <TextView
             android:id="@+id/review_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="15dp"
-            android:textAlignment="center" />
+            android:paddingBottom="15dp"
+            android:textAlignment="center"
+            android:textColor="@color/detail_text" />
     </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:background="@android:color/darker_gray" />
 
 </LinearLayout>

@@ -14,5 +14,6 @@
 
     <string name="content_authority">com.melegey.movies.moviesapp</string>
     <string name="action_favourites">Favourites</string>
+    <string name="trailer_thumbnail_description">Trailer Thumbnail</string>
 
 </resources>
