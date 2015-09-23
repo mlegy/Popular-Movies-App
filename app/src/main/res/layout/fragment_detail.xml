@@ -110,12 +110,14 @@
                 android:padding="15dp">
 
                 <TextView
+                    android:id="@+id/trailers_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="15dp"
-                    android:text="Trailers"
+                    android:text="@string/trailers_title"
                     android:textAppearance="?android:textAppearanceLarge"
-                    android:textColor="@color/detail_movie_header" />
+                    android:textColor="@color/detail_movie_header"
+                    android:visibility="gone" />
 
 
                 <LinearLayout
@@ -133,12 +135,14 @@
                 android:padding="15dp">
 
                 <TextView
+                    android:id="@+id/reviews_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingBottom="15dp"
-                    android:text="Reviews"
+                    android:text="@string/reviews_title"
                     android:textAppearance="?android:textAppearanceLarge"
-                    android:textColor="@color/detail_movie_header" />
+                    android:textColor="@color/detail_movie_header"
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/list_item_reviews"

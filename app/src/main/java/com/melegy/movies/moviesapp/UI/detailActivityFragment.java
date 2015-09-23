@@ -235,6 +235,8 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         protected void onPostExecute(final Collection<Trailer> trailers) {
             if (trailers != null) {
                 if (trailers.size() > 0) {
+                    TextView trailers_title = (TextView) getActivity().findViewById(R.id.trailers_title);
+                    trailers_title.setVisibility(View.VISIBLE);
                     final ArrayList<Trailer> mTrailers = new ArrayList<>();
                     mTrailers.addAll(trailers);
                     TrailersAdapter mTrailersAdapter = new TrailersAdapter(getActivity(), mTrailers);
@@ -256,19 +258,6 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                         });
                         trailersListView.addView(view);
                     }
-
-//                    trailersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//                        @Override
-//                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                            String youtubeLink = "https://www.youtube.com/watch?v=" + mTrailers.get(position).getKey();
-//                            Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeLink));
-//                            Utility.preferPackageForIntent(getActivity(), i,
-//                                    Utility.YOUTUBE_PACKAGE_NAME);
-//                            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-//                            startActivity(i);
-//                        }
-//                    });
-
                 }
             }
         }
@@ -381,6 +370,8 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         protected void onPostExecute(Collection<Review> reviews) {
             if (reviews != null) {
                 if (reviews.size() > 0) {
+                    TextView reviews_title = (TextView) getActivity().findViewById(R.id.reviews_title);
+                    reviews_title.setVisibility(View.VISIBLE);
                     mReviews = new ArrayList<>();
                     mReviews.addAll(reviews);
                     ReviewsAdapter mReviewsAdapter = new ReviewsAdapter(getActivity(), mReviews);
