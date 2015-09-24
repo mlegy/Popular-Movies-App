@@ -28,33 +28,32 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_gravity="bottom"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="4">
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/MovieItemText"
             android:layout_gravity="center_vertical"
+            android:layout_weight="3"
             android:gravity="left"
             android:paddingLeft="10dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/white"
+            android:textSize="18sp"
             android:transitionName="movie_title" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <ToggleButton
+            android:id="@+id/favouriteButton"
+            style="@style/FavoriteButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/fav_click_selector"
+            android:textOff=""
+            android:textOn="" />
 
-            <ToggleButton
-                android:id="@+id/favouriteButton"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerInParent="true"
-                android:background="@drawable/fav_click_selector"
-                android:textOff=""
-                android:textOn="" />
-        </RelativeLayout>
     </LinearLayout>
 
 </android.support.v7.widget.CardView>
