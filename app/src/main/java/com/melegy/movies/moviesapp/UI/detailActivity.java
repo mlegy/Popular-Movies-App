@@ -13,6 +13,16 @@ public class detailActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        if (savedInstanceState == null) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("movie", getIntent().getData());
+            detailActivityFragment detailActivityFragment = new detailActivityFragment();
+            detailActivityFragment.setArguments(bundle);
+
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.movie_detail_container, detailActivityFragment)
+                    .commit();
+        }
     }
 
 

@@ -54,40 +54,38 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
-        Intent intent = getActivity().getIntent();
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            movie = arguments.getParcelable("movie");
 
-        if (intent != null) {
-            Bundle data = intent.getExtras();
-            movie = data.getParcelable("movie");
             setMovieData(movie, view);
-        }
 
-        final Utility utility = new Utility(getActivity());
-        final ToggleButton add_bookmark = (ToggleButton) view.findViewById(R.id.favouriteButton);
-        add_bookmark.setChecked(utility.isFavoured(movie.getId()));
-        add_bookmark.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
-                if (isChecked) {
-                    utility.addToFavourites(movie, mReviews, trailers);
-                } else {
-                    if (utility.isFavoured(movie.getId())) {
-                        utility.removeFromFavourites(movie.getId());
+            final Utility utility = new Utility(getActivity());
+            final ToggleButton add_bookmark = (ToggleButton) view.findViewById(R.id.favouriteButton);
+            add_bookmark.setChecked(utility.isFavoured(movie.getId()));
+            add_bookmark.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
+                    if (isChecked) {
+                        utility.addToFavourites(movie, mReviews, trailers);
+                    } else {
+                        if (utility.isFavoured(movie.getId())) {
+                            utility.removeFromFavourites(movie.getId());
+                        }
                     }
                 }
-            }
-        });
-
+            });
+        }
         return view;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
-        fetchTrailersTask.execute();
-        fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
-        fetchReviewsTask.execute();
-    }
+//    @Override
+//    public void onViewCreated(View view, Bundle savedInstanceState) {
+//        fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
+//        fetchTrailersTask.execute();
+//        fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
+//        fetchReviewsTask.execute();
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
