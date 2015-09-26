@@ -237,7 +237,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         /**
          * callback for when an item has been selected.
          */
-        public void onItemSelected(Movie movie);
+        void onItemSelected(Movie movie);
     }
 
     public class fetchMoviesTask extends AsyncTask<String, Void, Collection<Movie>> {
