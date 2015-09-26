@@ -25,6 +25,10 @@ import com.melegy.movies.moviesapp.Model.Trailer;
 import com.melegy.movies.moviesapp.R;
 import com.melegy.movies.moviesapp.Utility.Utility;
 import com.melegy.movies.moviesapp.Utility.sensitiveData;
+import com.melegy.movies.moviesapp.provider.review.ReviewCursor;
+import com.melegy.movies.moviesapp.provider.review.ReviewSelection;
+import com.melegy.movies.moviesapp.provider.trailer.TrailerCursor;
+import com.melegy.movies.moviesapp.provider.trailer.TrailerSelection;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -39,6 +43,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class detailActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
 
@@ -46,6 +51,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     private ArrayList<Trailer> trailers;
     private ArrayList<Review> mReviews;
     private boolean hasArguments;
+    private boolean isFavoured;
 
     public detailActivityFragment() {
     }
@@ -63,17 +69,19 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             } else {
                 movie = getActivity().getIntent().getExtras().getParcelable("movie");
             }
+            assert movie != null;
+            isFavoured = Utility.isFavoured(movie.getId());
             setMovieData(movie, view);
 
             final ToggleButton add_bookmark = (ToggleButton) view.findViewById(R.id.favouriteButton);
-            add_bookmark.setChecked(Utility.isFavoured(movie.getId()));
+            add_bookmark.setChecked(isFavoured);
             add_bookmark.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
                     if (isChecked) {
                         Utility.addToFavourites(movie, mReviews, trailers);
                     } else {
-                        if (Utility.isFavoured(movie.getId())) {
+                        if (isFavoured) {
                             Utility.removeFromFavourites(movie.getId());
                         }
                     }
@@ -86,11 +94,14 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if (hasArguments) {
+        if (hasArguments && !isFavoured) {
             fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
             fetchTrailersTask.execute();
             fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
             fetchReviewsTask.execute();
+        } else if (isFavoured) {
+            fetchOfflineTrailers();
+            fetchOfflineReviews();
         }
     }
 
@@ -129,6 +140,78 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         TextView overview = (TextView) view.findViewById(R.id.detail_overview);
         overview.setText(movie.getOverview());
 
+    }
+
+    private void fetchOfflineReviews() {
+        ReviewSelection where = new ReviewSelection();
+        where.movieId(movie.getId());
+        ReviewCursor reviewCursor = where.query(getActivity());
+        Review review;
+        List<Review> favouriteReviews = new ArrayList<>();
+        while (reviewCursor.moveToNext()) {
+            review = new Review(reviewCursor.getReviewAuthor(), reviewCursor.getReviewContent());
+            favouriteReviews.add(review);
+        }
+        reviewCursor.close();
+        addReviewsToUI(favouriteReviews);
+    }
+
+    private void fetchOfflineTrailers() {
+        TrailerSelection where = new TrailerSelection();
+        where.movieId(movie.getId());
+        TrailerCursor trailerCursor = where.query(getActivity());
+        Trailer trailer;
+        List<Trailer> favouriteTrailers = new ArrayList<>();
+        while (trailerCursor.moveToNext()) {
+            trailer = new Trailer(trailerCursor.getTrailerName(), trailerCursor.getTrailerKey());
+            favouriteTrailers.add(trailer);
+        }
+        trailerCursor.close();
+        addTrailersToUI(favouriteTrailers);
+    }
+
+    private void addReviewsToUI(List<Review> favouriteReviews) {
+        if (favouriteReviews.size() > 0) {
+            TextView reviews_title = (TextView) getActivity().findViewById(R.id.reviews_title);
+            reviews_title.setVisibility(View.VISIBLE);
+            mReviews = new ArrayList<>();
+            mReviews.addAll(favouriteReviews);
+            ReviewsAdapter mReviewsAdapter = new ReviewsAdapter(getActivity(), mReviews);
+            LinearLayout reviewsListView = (LinearLayout) getActivity()
+                    .findViewById(R.id.list_item_reviews);
+            for (int i = 0; i < mReviewsAdapter.getCount(); i++) {
+                View view = mReviewsAdapter.getView(i, null, null);
+                reviewsListView.addView(view);
+            }
+        }
+    }
+
+    private void addTrailersToUI(List<Trailer> trailers) {
+        if (trailers.size() > 0) {
+            TextView trailers_title = (TextView) getActivity().findViewById(R.id.trailers_title);
+            trailers_title.setVisibility(View.VISIBLE);
+            final ArrayList<Trailer> mTrailers = new ArrayList<>();
+            mTrailers.addAll(trailers);
+            TrailersAdapter mTrailersAdapter = new TrailersAdapter(getActivity(), mTrailers);
+            LinearLayout trailersListView = (LinearLayout) getActivity().findViewById(R.id.list_item_trailers);
+
+            for (int i = 0; i < mTrailersAdapter.getCount(); i++) {
+                View view = mTrailersAdapter.getView(i, null, null);
+                final int finalI = i;
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String youtubeLink = "https://www.youtube.com/watch?v=" + mTrailers.get(finalI).getKey();
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeLink));
+                        Utility.preferPackageForIntent(getActivity(), intent,
+                                Utility.YOUTUBE_PACKAGE_NAME);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                        startActivity(intent);
+                    }
+                });
+                trailersListView.addView(view);
+            }
+        }
     }
 
     public void onItemClick(AdapterView<?> l, View v, int position, long id) {
@@ -242,31 +325,8 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         @Override
         protected void onPostExecute(final Collection<Trailer> trailers) {
             if (trailers != null) {
-                if (trailers.size() > 0) {
-                    TextView trailers_title = (TextView) getActivity().findViewById(R.id.trailers_title);
-                    trailers_title.setVisibility(View.VISIBLE);
-                    final ArrayList<Trailer> mTrailers = new ArrayList<>();
-                    mTrailers.addAll(trailers);
-                    TrailersAdapter mTrailersAdapter = new TrailersAdapter(getActivity(), mTrailers);
-                    LinearLayout trailersListView = (LinearLayout) getActivity().findViewById(R.id.list_item_trailers);
-
-                    for (int i = 0; i < mTrailersAdapter.getCount(); i++) {
-                        View view = mTrailersAdapter.getView(i, null, null);
-                        final int finalI = i;
-                        view.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                String youtubeLink = "https://www.youtube.com/watch?v=" + mTrailers.get(finalI).getKey();
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeLink));
-                                Utility.preferPackageForIntent(getActivity(), intent,
-                                        Utility.YOUTUBE_PACKAGE_NAME);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                                startActivity(intent);
-                            }
-                        });
-                        trailersListView.addView(view);
-                    }
-                }
+                List<Trailer> trailerList = new ArrayList<>(trailers);
+                addTrailersToUI(trailerList);
             }
         }
     }
@@ -377,18 +437,8 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         @Override
         protected void onPostExecute(Collection<Review> reviews) {
             if (reviews != null) {
-                if (reviews.size() > 0) {
-                    TextView reviews_title = (TextView) getActivity().findViewById(R.id.reviews_title);
-                    reviews_title.setVisibility(View.VISIBLE);
-                    mReviews = new ArrayList<>();
-                    mReviews.addAll(reviews);
-                    ReviewsAdapter mReviewsAdapter = new ReviewsAdapter(getActivity(), mReviews);
-                    LinearLayout reviewsListView = (LinearLayout) getActivity().findViewById(R.id.list_item_reviews);
-                    for (int i = 0; i < mReviewsAdapter.getCount(); i++) {
-                        View view = mReviewsAdapter.getView(i, null, null);
-                        reviewsListView.addView(view);
-                    }
-                }
+                List<Review> reviewList = new ArrayList<>(reviews);
+                addReviewsToUI(reviewList);
             }
         }
     }

@@ -21,6 +21,11 @@ public class Trailer {
         this.type = trailer.getString("type");
     }
 
+    public Trailer(String name, String key) {
+        this.name = name;
+        this.key = key;
+    }
+
     public String getId() {
         return id;
     }

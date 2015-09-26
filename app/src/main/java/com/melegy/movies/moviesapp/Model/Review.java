@@ -16,6 +16,11 @@ public class Review {
 
     }
 
+    public Review(String author, String content) {
+        this.author = author;
+        this.content = content;
+    }
+
     public Review(JSONObject trailer) throws JSONException {
         this.id = trailer.getString("id");
         this.author = trailer.getString("author");
