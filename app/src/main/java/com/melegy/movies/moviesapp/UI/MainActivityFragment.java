@@ -1,6 +1,7 @@
 package com.melegy.movies.moviesapp.UI;
 
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,7 +22,6 @@ import android.widget.ProgressBar;
 import com.melegy.movies.moviesapp.Adapters.MoviesAdapter;
 import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.R;
-import com.melegy.movies.moviesapp.Utility.Utility;
 import com.melegy.movies.moviesapp.Utility.sensitiveData;
 import com.melegy.movies.moviesapp.provider.movie.MovieCursor;
 import com.melegy.movies.moviesapp.provider.movie.MovieSelection;
@@ -43,6 +43,7 @@ import java.util.List;
 
 public class MainActivityFragment extends Fragment implements EndlessRecyclerViewAdapter.RequestToLoadMoreListener {
 
+    private static final String TAG_FRAGMENT = "MOVIEFRAGMENT";
     Collection<Movie> all_movies = new ArrayList<>();
     private int page_num = 0;
     private MoviesAdapter adapter;
@@ -50,6 +51,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     private ProgressBar progressBar;
     private boolean showFavourites;
     private EndlessRecyclerViewAdapter endlessRecyclerViewAdapter;
+    private LinearLayoutManager mStaggeredLayoutManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +68,15 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         adapter = new MoviesAdapter(getActivity(), null);
 
         RecyclerView moviesRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        final LinearLayoutManager mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 2);
+
+        Configuration config = getActivity().getResources().getConfiguration();
+        if (config.smallestScreenWidthDp >= 600
+                && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)) {
+            mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 1);
+        } else {
+            mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 2);
+        }
+
 
         moviesRecyclerView.setLayoutManager(mStaggeredLayoutManager);
 
@@ -76,8 +86,6 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         moviesRecyclerView.setAdapter(endlessRecyclerViewAdapter);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
-
-        final Utility utility = new Utility(getActivity());
 
         return view;
     }
@@ -108,9 +116,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                     item.setChecked(false);
                 } else {
                     item.setChecked(true);
-                    all_movies.clear();
-                    adapter.clear();
-                    page_num = 1;
+                    prepareUpdate();
                 }
                 showFavourites = false;
                 sort_type = getResources().getString(R.string.pref_sort_popularity);
@@ -121,9 +127,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                     item.setChecked(false);
                 } else {
                     item.setChecked(true);
-                    all_movies.clear();
-                    adapter.clear();
-                    page_num = 1;
+                    prepareUpdate();
                 }
                 showFavourites = false;
                 sort_type = getResources().getString(R.string.pref_sort_type_rating);
@@ -134,15 +138,25 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                     item.setChecked(false);
                 } else {
                     item.setChecked(true);
-                    showFavourites = true;
-                    all_movies.clear();
-                    adapter.clear();
+                    prepareUpdate();
                 }
+                showFavourites = true;
                 updateView();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void prepareUpdate() {
+        all_movies.clear();
+        adapter.clear();
+        page_num = 1;
+        Fragment fragment = getActivity().getSupportFragmentManager()
+                .findFragmentByTag(TAG_FRAGMENT);
+        if (fragment != null)
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .remove(fragment).commit();
     }
 
     private void updateView() {
@@ -158,27 +172,6 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         MoviesAdapter.OnItemClickListener onItemClickListener = new MoviesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, int position) {
-//                Intent intent = new Intent(getActivity(), detailActivity.class);
-//                Movie mMovie;
-//                if (showFavourites) {
-//                    mMovie = (Movie) movies.toArray()[position];
-//                } else {
-//                    mMovie = (Movie) all_movies.toArray()[position];
-//                }
-//                intent.putExtra("movie", mMovie);
-//                // Check if we're running on Android 5.0 or higher
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                    ImageView moviePoster = (ImageView) getActivity().findViewById(R.id.thumbnail);
-//                    TextView movieTitle = (TextView) getActivity().findViewById(R.id.title);
-//                    Pair<View, String> p1 = Pair.create((View) moviePoster, "movie_poster");
-//                    Pair<View, String> p2 = Pair.create((View) movieTitle, "movie_title");
-//                    ActivityOptionsCompat options = ActivityOptionsCompat.
-//                            makeSceneTransitionAnimation(getActivity(), p1, p2);
-//                    getActivity().startActivity(intent, options.toBundle());
-//
-//                } else {
-//                    startActivity(intent);
-//                }
                 Movie mMovie;
                 if (showFavourites) {
                     mMovie = (Movie) movies.toArray()[position];
@@ -189,6 +182,16 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
             }
         };
         adapter.setOnItemClickListener(onItemClickListener);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 1);
+
+        }
     }
 
     private void fetchFavouritesMovies() {
@@ -203,6 +206,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
             favouriteMovies.add(movie);
         }
         movieCursor.close();
+        adapter.clear();
         adapter.addMovies(favouriteMovies);
         endlessRecyclerViewAdapter.onDataReady(true);
         adapter.notifyDataSetChanged();

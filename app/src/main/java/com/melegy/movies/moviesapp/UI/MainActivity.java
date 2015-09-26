@@ -1,14 +1,21 @@
 package com.melegy.movies.moviesapp.UI;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.R;
 
 public class MainActivity extends ActionBarActivity implements MainActivityFragment.Callback {
 
+    private static final String TAG_FRAGMENT = "MOVIEFRAGMENT";
     private boolean mTwoPane;
 
     @Override
@@ -18,10 +25,9 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
 
         if (findViewById(R.id.movie_detail_container) != null) {
             mTwoPane = true;
-            Log.i("mTwoPane", "true");
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.movie_detail_container, new detailActivityFragment())
+                        .add(R.id.movie_detail_container, new detailActivityFragment(), TAG_FRAGMENT)
                         .commit();
             }
         } else {
@@ -34,20 +40,33 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
     @Override
     public void onItemSelected(Movie movie) {
         if (mTwoPane) {
-
             Bundle args = new Bundle();
+            args.putBoolean("twoPane", true);
             args.putParcelable("movie", movie);
             detailActivityFragment fragment = new detailActivityFragment();
             fragment.setArguments(args);
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.movie_detail_container, fragment)
+                    .replace(R.id.movie_detail_container, fragment, TAG_FRAGMENT)
                     .commit();
             //one-pane mode
-//        } else {
-//            Intent intent = new Intent(this, detailActivity.class)
-//                    .setData(movie);
-//            startActivity(intent);
-//        }
+        } else {
+            Intent intent = new Intent(this, detailActivity.class);
+            intent.putExtra("movie", movie);
+
+            // Check if we're running on Android 5.0 or higher
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ImageView moviePoster = (ImageView) findViewById(R.id.thumbnail);
+                TextView movieTitle = (TextView) findViewById(R.id.title);
+                Pair<View, String> p1 = Pair.create((View) moviePoster, "movie_poster");
+                Pair<View, String> p2 = Pair.create((View) movieTitle, "movie_title");
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(this, p1, p2);
+                startActivity(intent, options.toBundle());
+
+            } else {
+                startActivity(intent);
+            }
         }
     }
 }
+

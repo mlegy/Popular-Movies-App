@@ -45,6 +45,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     private Movie movie;
     private ArrayList<Trailer> trailers;
     private ArrayList<Review> mReviews;
+    private boolean hasArguments;
 
     public detailActivityFragment() {
     }
@@ -56,36 +57,42 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
         Bundle arguments = getArguments();
         if (arguments != null) {
-            movie = arguments.getParcelable("movie");
-
+            hasArguments = true;
+            if (arguments.getBoolean("twoPane")) {
+                movie = arguments.getParcelable("movie");
+            } else {
+                movie = getActivity().getIntent().getExtras().getParcelable("movie");
+            }
             setMovieData(movie, view);
 
-            final Utility utility = new Utility(getActivity());
             final ToggleButton add_bookmark = (ToggleButton) view.findViewById(R.id.favouriteButton);
-            add_bookmark.setChecked(utility.isFavoured(movie.getId()));
+            add_bookmark.setChecked(Utility.isFavoured(movie.getId()));
             add_bookmark.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
                     if (isChecked) {
-                        utility.addToFavourites(movie, mReviews, trailers);
+                        Utility.addToFavourites(movie, mReviews, trailers);
                     } else {
-                        if (utility.isFavoured(movie.getId())) {
-                            utility.removeFromFavourites(movie.getId());
+                        if (Utility.isFavoured(movie.getId())) {
+                            Utility.removeFromFavourites(movie.getId());
                         }
                     }
                 }
             });
         }
+
         return view;
     }
 
-//    @Override
-//    public void onViewCreated(View view, Bundle savedInstanceState) {
-//        fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
-//        fetchTrailersTask.execute();
-//        fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
-//        fetchReviewsTask.execute();
-//    }
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        if (hasArguments) {
+            fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
+            fetchTrailersTask.execute();
+            fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
+            fetchReviewsTask.execute();
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -100,7 +107,10 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
 
     private void setMovieData(Movie movie, View view) {
         ImageView poster_imageView = (ImageView) view.findViewById(R.id.moviePoster);
-        Picasso.with(getActivity()).load(movie.getPosterURI("w500", "poster")).into(poster_imageView);
+        Picasso
+                .with(getActivity())
+                .load(movie.getPosterURI("w500", "poster"))
+                .into(poster_imageView);
 
         TextView movie_title = (TextView) view.findViewById(R.id.movieTitle);
         movie_title.setText(movie.getTitle());
@@ -199,7 +209,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             }
 
             try {
-                return getYoutbeVideos(moviesJSON);
+                return getYoutubeVideos(moviesJSON);
             } catch (Exception e) {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
@@ -209,7 +219,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         }
 
 
-        private Collection<Trailer> getYoutbeVideos(String trailersObject)
+        private Collection<Trailer> getYoutubeVideos(String trailersObject)
                 throws JSONException {
 
             final String MDB_LIST = "results";

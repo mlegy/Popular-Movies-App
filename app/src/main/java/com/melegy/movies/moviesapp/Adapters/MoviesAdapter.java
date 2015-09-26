@@ -31,6 +31,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     public MoviesAdapter(Context context, Collection<Movie> movies) {
         this.context = context;
         this.movies = movies;
+        Utility utility = new Utility(context);
     }
 
     @Override
@@ -62,20 +63,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         //Download image using picasso library
         Picasso.with(context)
                 .load(movie.getPosterURI("w185", "poster"))
-                .into(moviesViewHolder.imageView);
-
-        //Setting text view title
-        moviesViewHolder.titleView.setText(movie.getTitle());
-
-        Picasso.with(context).
-                load(movie.getPosterURI("w185", "poster"))
-                .fit()
                 .into(moviesViewHolder.imageView,
                         PicassoPalette
                                 .with(movie.getPosterURI("w185", "poster").toString(), moviesViewHolder.imageView)
                                 .use(PicassoPalette.Profile.VIBRANT)
                                 .intoBackground(moviesViewHolder.movieTitleHolder)
                                 .intoTextColor(moviesViewHolder.titleView, PicassoPalette.Swatch.BODY_TEXT_COLOR));
+
+        //Setting text view title
+        moviesViewHolder.titleView.setText(movie.getTitle());
+
     }
 
     @Override
