@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import com.melegy.movies.moviesapp.Adapters.MoviesAdapter;
 import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.R;
+import com.melegy.movies.moviesapp.Utility.Utility;
 import com.melegy.movies.moviesapp.Utility.sensitiveData;
 import com.melegy.movies.moviesapp.provider.movie.MovieCursor;
 import com.melegy.movies.moviesapp.provider.movie.MovieSelection;
@@ -43,7 +44,7 @@ import java.util.List;
 
 public class MainActivityFragment extends Fragment implements EndlessRecyclerViewAdapter.RequestToLoadMoreListener {
 
-    private static final String TAG_FRAGMENT = "MOVIEFRAGMENT";
+    private static final String TAG_FRAGMENT = "MOVIE_FRAGMENT";
     Collection<Movie> all_movies = new ArrayList<>();
     private int page_num = 0;
     private MoviesAdapter adapter;
@@ -77,7 +78,6 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
             mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 2);
         }
 
-
         moviesRecyclerView.setLayoutManager(mStaggeredLayoutManager);
 
         moviesRecyclerView.setHasFixedSize(true);
@@ -95,7 +95,14 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         inflater.inflate(R.menu.menu_main, menu);
         MenuItem action_sort_by_popularity = menu.findItem(R.id.action_sort_by_popularity);
         MenuItem action_sort_by_rating = menu.findItem(R.id.action_sort_by_rating);
+        MenuItem action_show_fav = menu.findItem(R.id.action_favourites);
 
+        if (!Utility.isNetworkAvailable()) {
+            action_show_fav.setChecked(true);
+            showFavourites = true;
+            updateView();
+            return;
+        }
         if (sort_type.contentEquals(getResources().getString(R.string.pref_sort_popularity))) {
             if (!action_sort_by_popularity.isChecked()) {
                 action_sort_by_popularity.setChecked(true);

@@ -15,7 +15,7 @@ import com.melegy.movies.moviesapp.R;
 
 public class MainActivity extends ActionBarActivity implements MainActivityFragment.Callback {
 
-    private static final String TAG_FRAGMENT = "MOVIEFRAGMENT";
+    private static final String TAG_FRAGMENT = "MOVIE_FRAGMENT";
     private boolean mTwoPane;
 
     @Override
