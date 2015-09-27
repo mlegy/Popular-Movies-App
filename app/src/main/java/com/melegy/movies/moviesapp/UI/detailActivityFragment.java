@@ -380,12 +380,14 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                 addTrailersToUI(trailerList);
                 prepareShare();
                 getActivity().invalidateOptionsMenu();
-                TrailerSelection where = new TrailerSelection();
-                where.movieId(movie.getId());
-                TrailerCursor trailerCursor = where.query(getActivity());
-                if (!trailerCursor.moveToFirst()) {
-                    for (Trailer trailer : trailerList) {
-                        Utility.addTrailerToContentProvider(movie.getId(), trailer);
+                if (isFavoured) {
+                    TrailerSelection where = new TrailerSelection();
+                    where.movieId(movie.getId());
+                    TrailerCursor trailerCursor = where.query(getActivity());
+                    if (!trailerCursor.moveToFirst()) {
+                        for (Trailer trailer : trailerList) {
+                            Utility.addTrailerToContentProvider(movie.getId(), trailer);
+                        }
                     }
                 }
             }
@@ -500,12 +502,14 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             if (reviews != null) {
                 List<Review> reviewList = new ArrayList<>(reviews);
                 addReviewsToUI(reviewList);
-                ReviewSelection where = new ReviewSelection();
-                where.movieId(movie.getId());
-                ReviewCursor reviewCursor = where.query(getActivity());
-                if (!reviewCursor.moveToFirst()) {
-                    for (Review review : reviewList) {
-                        Utility.addReviewToContentProvider(movie.getId(), review);
+                if (isFavoured) {
+                    ReviewSelection where = new ReviewSelection();
+                    where.movieId(movie.getId());
+                    ReviewCursor reviewCursor = where.query(getActivity());
+                    if (!reviewCursor.moveToFirst()) {
+                        for (Review review : reviewList) {
+                            Utility.addReviewToContentProvider(movie.getId(), review);
+                        }
                     }
                 }
             }
