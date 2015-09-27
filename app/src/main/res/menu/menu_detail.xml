@@ -1,3 +1,13 @@
-<menu xmlns:tools="http://schemas.android.com/tools"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.melegy.movies.moviesapp.UI.detailActivity">
+
+    <item
+        android:id="@+id/share_action"
+        android:title="@string/share_menu_item"
+        android:visible="false"
+        app:actionProviderClass="android.support.v7.widget.ShareActionProvider"
+        app:showAsAction="ifRoom"></item>
+
 </menu>

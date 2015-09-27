@@ -5,8 +5,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,13 +51,20 @@ import java.util.List;
 
 public class detailActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
 
+    private static final String LOG_TAG = detailActivityFragment.class.getSimpleName();
     private Movie movie;
     private ArrayList<Trailer> trailers;
     private ArrayList<Review> mReviews;
     private boolean hasArguments;
     private boolean isFavoured;
+    private ShareActionProvider mShareActionProvider;
+    private MenuItem menuItem;
+    private String trailer_title;
+    private String trailer_key;
+    private boolean trailerFound;
 
     public detailActivityFragment() {
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -61,6 +72,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
+        Utility utility = new Utility(getActivity());
         Bundle arguments = getArguments();
         if (arguments != null) {
             hasArguments = true;
@@ -106,7 +118,28 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (menu.findItem(R.id.share_action) == null) {
+            inflater.inflate(R.menu.menu_detail, menu);
+            menuItem = menu.findItem(R.id.share_action);
+            menuItem.setVisible(trailerFound);
+        }
+    }
+
+    private Intent createShareIntent(String movie_name, String trailer_name, String key) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT,
+                "Watch " + movie_name + ": " + trailer_name
+                        + " http://www.youtube.com/watch?v="
+                        + key + " #Udacity_Movies_App");
+        return shareIntent;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        getActivity().invalidateOptionsMenu();
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
@@ -114,6 +147,18 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void prepareShare() {
+        mShareActionProvider = (ShareActionProvider)
+                MenuItemCompat.getActionProvider(menuItem);
+        if (trailer_title != null && trailer_key != null) {
+            trailerFound = true;
+            mShareActionProvider.setShareIntent(createShareIntent(movie.getTitle(),
+                    trailer_title, trailer_key));
+        } else {
+            trailerFound = false;
+        }
     }
 
     private void setMovieData(Movie movie, View view) {
@@ -210,6 +255,12 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                     }
                 });
                 trailersListView.addView(view);
+                trailer_title = trailers.get(0).getName();
+                trailer_key = trailers.get(0).getKey();
+//                if (mShareActionProvider != null) {
+//                    mShareActionProvider.setShareIntent(createShareIntent(
+//                            trailers.get(0).getName(), trailers.get(0).getKey()));
+//                }
             }
         }
     }
@@ -327,6 +378,8 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             if (trailers != null) {
                 List<Trailer> trailerList = new ArrayList<>(trailers);
                 addTrailersToUI(trailerList);
+                prepareShare();
+                getActivity().invalidateOptionsMenu();
             }
         }
     }

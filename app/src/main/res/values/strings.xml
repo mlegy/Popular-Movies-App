@@ -17,5 +17,6 @@
     <string name="trailer_thumbnail_description">Trailer Thumbnail</string>
     <string name="trailers_title">Trailers</string>
     <string name="reviews_title">Reviews</string>
+    <string name="share_menu_item">Share</string>
 
 </resources>
