@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.melegy.movies.moviesapp.Adapters.MoviesAdapter;
 import com.melegy.movies.moviesapp.Model.Movie;
@@ -53,6 +54,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     private boolean showFavourites;
     private EndlessRecyclerViewAdapter endlessRecyclerViewAdapter;
     private LinearLayoutManager mStaggeredLayoutManager;
+    private MenuItem action_show_fav;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,15 +97,11 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         inflater.inflate(R.menu.menu_main, menu);
         MenuItem action_sort_by_popularity = menu.findItem(R.id.action_sort_by_popularity);
         MenuItem action_sort_by_rating = menu.findItem(R.id.action_sort_by_rating);
-        MenuItem action_show_fav = menu.findItem(R.id.action_favourites);
+        action_show_fav = menu.findItem(R.id.action_favourites);
 
         if (!Utility.isNetworkAvailable()) {
-            action_show_fav.setChecked(true);
-            showFavourites = true;
-            updateView();
-            return;
-        }
-        if (sort_type.contentEquals(getResources().getString(R.string.pref_sort_popularity))) {
+            navigateToFavourites(action_show_fav, true);
+        } else if (sort_type.contentEquals(getResources().getString(R.string.pref_sort_popularity))) {
             if (!action_sort_by_popularity.isChecked()) {
                 action_sort_by_popularity.setChecked(true);
             }
@@ -114,31 +112,51 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         }
     }
 
+    private void navigateToFavourites(MenuItem action_show_fav, boolean onCreate) {
+        action_show_fav.setChecked(true);
+        showFavourites = true;
+        updateView();
+        if (!onCreate) {
+            Toast.makeText(getActivity(),
+                    "No internet connection, Navigated to your favourite movies",
+                    Toast.LENGTH_SHORT)
+                    .show();
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         switch (id) {
             case R.id.action_sort_by_popularity:
-                if (item.isChecked()) {
-                    item.setChecked(false);
+                if (Utility.isNetworkAvailable()) {
+                    if (item.isChecked()) {
+                        item.setChecked(false);
+                    } else {
+                        item.setChecked(true);
+                        prepareUpdate();
+                    }
+                    showFavourites = false;
+                    sort_type = getResources().getString(R.string.pref_sort_popularity);
+                    updateView();
                 } else {
-                    item.setChecked(true);
-                    prepareUpdate();
+                    navigateToFavourites(action_show_fav, false);
                 }
-                showFavourites = false;
-                sort_type = getResources().getString(R.string.pref_sort_popularity);
-                updateView();
                 return true;
             case R.id.action_sort_by_rating:
-                if (item.isChecked()) {
-                    item.setChecked(false);
+                if (Utility.isNetworkAvailable()) {
+                    if (item.isChecked()) {
+                        item.setChecked(false);
+                    } else {
+                        item.setChecked(true);
+                        prepareUpdate();
+                    }
+                    showFavourites = false;
+                    sort_type = getResources().getString(R.string.pref_sort_type_rating);
+                    updateView();
                 } else {
-                    item.setChecked(true);
-                    prepareUpdate();
+                    navigateToFavourites(action_show_fav, false);
                 }
-                showFavourites = false;
-                sort_type = getResources().getString(R.string.pref_sort_type_rating);
-                updateView();
                 return true;
             case R.id.action_favourites:
                 if (item.isChecked()) {
