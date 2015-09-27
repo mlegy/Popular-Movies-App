@@ -57,7 +57,6 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     private ArrayList<Review> mReviews;
     private boolean hasArguments;
     private boolean isFavoured;
-    private ShareActionProvider mShareActionProvider;
     private MenuItem menuItem;
     private String trailer_title;
     private String trailer_key;
@@ -148,8 +147,9 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     }
 
     private void prepareShare() {
-        mShareActionProvider = (ShareActionProvider)
-                MenuItemCompat.getActionProvider(menuItem);
+        ShareActionProvider mShareActionProvider = new ShareActionProvider(getActivity());
+        MenuItemCompat.setActionProvider(menuItem, mShareActionProvider);
+
         if (trailer_title != null && trailer_key != null) {
             trailerFound = true;
             mShareActionProvider.setShareIntent(createShareIntent(movie.getTitle(),
@@ -190,13 +190,13 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         where.movieId(movie.getId());
         ReviewCursor reviewCursor = where.query(getActivity());
         Review review;
-        List<Review> favouriteReviews = new ArrayList<>();
+        mReviews = new ArrayList<>();
         while (reviewCursor.moveToNext()) {
             review = new Review(reviewCursor.getReviewAuthor(), reviewCursor.getReviewContent());
-            favouriteReviews.add(review);
+            mReviews.add(review);
         }
         reviewCursor.close();
-        addReviewsToUI(favouriteReviews);
+        addReviewsToUI(mReviews);
     }
 
     private void fetchOfflineTrailers() {
@@ -204,13 +204,15 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         where.movieId(movie.getId());
         TrailerCursor trailerCursor = where.query(getActivity());
         Trailer trailer;
-        List<Trailer> favouriteTrailers = new ArrayList<>();
+        trailers = new ArrayList<>();
         while (trailerCursor.moveToNext()) {
             trailer = new Trailer(trailerCursor.getTrailerName(), trailerCursor.getTrailerKey());
-            favouriteTrailers.add(trailer);
+            trailers.add(trailer);
         }
         trailerCursor.close();
-        addTrailersToUI(favouriteTrailers);
+        addTrailersToUI(trailers);
+        prepareShare();
+        getActivity().invalidateOptionsMenu();
     }
 
     private void addReviewsToUI(List<Review> favouriteReviews) {
@@ -255,10 +257,6 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                 trailersListView.addView(view);
                 trailer_title = trailers.get(0).getName();
                 trailer_key = trailers.get(0).getKey();
-//                if (mShareActionProvider != null) {
-//                    mShareActionProvider.setShareIntent(createShareIntent(
-//                            trailers.get(0).getName(), trailers.get(0).getKey()));
-//                }
             }
         }
     }
