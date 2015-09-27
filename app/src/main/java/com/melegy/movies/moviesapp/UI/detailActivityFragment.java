@@ -106,14 +106,14 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if (hasArguments && !isFavoured) {
+        if (isFavoured && !Utility.isNetworkAvailable()) {
+            fetchOfflineTrailers();
+            fetchOfflineReviews();
+        } else if (hasArguments) {
             fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
             fetchTrailersTask.execute();
             fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
             fetchReviewsTask.execute();
-        } else if (isFavoured) {
-            fetchOfflineTrailers();
-            fetchOfflineReviews();
         }
     }
 
