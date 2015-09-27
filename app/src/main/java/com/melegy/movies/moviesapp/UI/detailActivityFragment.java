@@ -105,22 +105,24 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if (isFavoured && !Utility.isNetworkAvailable()) {
-            fetchOfflineTrailers();
-            fetchOfflineReviews();
-        } else if (hasArguments) {
-            fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
-            fetchTrailersTask.execute();
-            fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
-            fetchReviewsTask.execute();
+        if (isAdded()) {
+            if (isFavoured && !Utility.isNetworkAvailable()) {
+                fetchOfflineTrailers();
+                fetchOfflineReviews();
+            } else if (hasArguments) {
+                fetchTrailersTask fetchTrailersTask = new fetchTrailersTask();
+                fetchTrailersTask.execute();
+                fetchReviewsTask fetchReviewsTask = new fetchReviewsTask();
+                fetchReviewsTask.execute();
+            }
         }
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-            inflater.inflate(R.menu.menu_detail, menu);
-            menuItem = menu.findItem(R.id.share_action);
-            menuItem.setVisible(trailerFound);
+        inflater.inflate(R.menu.menu_detail, menu);
+        menuItem = menu.findItem(R.id.share_action);
+        menuItem.setVisible(trailerFound);
     }
 
     private Intent createShareIntent(String movie_name, String trailer_name, String key) {
@@ -149,7 +151,6 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     private void prepareShare() {
         ShareActionProvider mShareActionProvider = new ShareActionProvider(getActivity());
         MenuItemCompat.setActionProvider(menuItem, mShareActionProvider);
-
         if (trailer_title != null && trailer_key != null) {
             trailerFound = true;
             mShareActionProvider.setShareIntent(createShareIntent(movie.getTitle(),
@@ -190,13 +191,13 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         where.movieId(movie.getId());
         ReviewCursor reviewCursor = where.query(getActivity());
         Review review;
-        mReviews = new ArrayList<>();
+        List<Review> favouriteReviews = new ArrayList<>();
         while (reviewCursor.moveToNext()) {
             review = new Review(reviewCursor.getReviewAuthor(), reviewCursor.getReviewContent());
-            mReviews.add(review);
+            favouriteReviews.add(review);
         }
         reviewCursor.close();
-        addReviewsToUI(mReviews);
+        addReviewsToUI(favouriteReviews);
     }
 
     private void fetchOfflineTrailers() {
@@ -217,7 +218,8 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
 
     private void addReviewsToUI(List<Review> favouriteReviews) {
         if (favouriteReviews.size() > 0) {
-            TextView reviews_title = (TextView) getActivity().findViewById(R.id.reviews_title);
+            if (isAdded()) {
+                TextView reviews_title = (TextView) getActivity().findViewById(R.id.reviews_title);
             reviews_title.setVisibility(View.VISIBLE);
             mReviews = new ArrayList<>();
             mReviews.addAll(favouriteReviews);
@@ -229,34 +231,37 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                 reviewsListView.addView(view);
             }
         }
+        }
     }
 
     private void addTrailersToUI(List<Trailer> trailers) {
         if (trailers.size() > 0) {
-            TextView trailers_title = (TextView) getActivity().findViewById(R.id.trailers_title);
-            trailers_title.setVisibility(View.VISIBLE);
-            final ArrayList<Trailer> mTrailers = new ArrayList<>();
-            mTrailers.addAll(trailers);
-            TrailersAdapter mTrailersAdapter = new TrailersAdapter(getActivity(), mTrailers);
-            LinearLayout trailersListView = (LinearLayout) getActivity().findViewById(R.id.list_item_trailers);
+            if (isAdded()) {
+                TextView trailers_title = (TextView) getActivity().findViewById(R.id.trailers_title);
+                trailers_title.setVisibility(View.VISIBLE);
+                final ArrayList<Trailer> mTrailers = new ArrayList<>();
+                mTrailers.addAll(trailers);
+                TrailersAdapter mTrailersAdapter = new TrailersAdapter(getActivity(), mTrailers);
+                LinearLayout trailersListView = (LinearLayout) getActivity().findViewById(R.id.list_item_trailers);
 
-            for (int i = 0; i < mTrailersAdapter.getCount(); i++) {
-                View view = mTrailersAdapter.getView(i, null, null);
-                final int finalI = i;
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String youtubeLink = "https://www.youtube.com/watch?v=" + mTrailers.get(finalI).getKey();
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeLink));
-                        Utility.preferPackageForIntent(getActivity(), intent,
-                                Utility.YOUTUBE_PACKAGE_NAME);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                        startActivity(intent);
-                    }
-                });
-                trailersListView.addView(view);
-                trailer_title = trailers.get(0).getName();
-                trailer_key = trailers.get(0).getKey();
+                for (int i = 0; i < mTrailersAdapter.getCount(); i++) {
+                    View view = mTrailersAdapter.getView(i, null, null);
+                    final int finalI = i;
+                    view.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String youtubeLink = "https://www.youtube.com/watch?v=" + mTrailers.get(finalI).getKey();
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeLink));
+                            Utility.preferPackageForIntent(getActivity(), intent,
+                                    Utility.YOUTUBE_PACKAGE_NAME);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                            startActivity(intent);
+                        }
+                    });
+                    trailersListView.addView(view);
+                    trailer_title = trailers.get(0).getName();
+                    trailer_key = trailers.get(0).getKey();
+                }
             }
         }
     }
@@ -372,17 +377,19 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         @Override
         protected void onPostExecute(final Collection<Trailer> trailers) {
             if (trailers != null) {
-                List<Trailer> trailerList = new ArrayList<>(trailers);
-                addTrailersToUI(trailerList);
-                prepareShare();
-                getActivity().invalidateOptionsMenu();
-                if (isFavoured) {
-                    TrailerSelection where = new TrailerSelection();
-                    where.movieId(movie.getId());
-                    TrailerCursor trailerCursor = where.query(getActivity());
-                    if (!trailerCursor.moveToFirst()) {
-                        for (Trailer trailer : trailerList) {
-                            Utility.addTrailerToContentProvider(movie.getId(), trailer);
+                if (isAdded()) {
+                    List<Trailer> trailerList = new ArrayList<>(trailers);
+                    addTrailersToUI(trailerList);
+                    prepareShare();
+                    getActivity().invalidateOptionsMenu();
+                    if (isFavoured) {
+                        TrailerSelection where = new TrailerSelection();
+                        where.movieId(movie.getId());
+                        TrailerCursor trailerCursor = where.query(getActivity());
+                        if (!trailerCursor.moveToFirst()) {
+                            for (Trailer trailer : trailerList) {
+                                Utility.addTrailerToContentProvider(movie.getId(), trailer);
+                            }
                         }
                     }
                 }
@@ -496,15 +503,17 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         @Override
         protected void onPostExecute(Collection<Review> reviews) {
             if (reviews != null) {
-                List<Review> reviewList = new ArrayList<>(reviews);
-                addReviewsToUI(reviewList);
-                if (isFavoured) {
-                    ReviewSelection where = new ReviewSelection();
-                    where.movieId(movie.getId());
-                    ReviewCursor reviewCursor = where.query(getActivity());
-                    if (!reviewCursor.moveToFirst()) {
-                        for (Review review : reviewList) {
-                            Utility.addReviewToContentProvider(movie.getId(), review);
+                if (isAdded()) {
+                    List<Review> reviewList = new ArrayList<>(reviews);
+                    addReviewsToUI(reviewList);
+                    if (isFavoured) {
+                        ReviewSelection where = new ReviewSelection();
+                        where.movieId(movie.getId());
+                        ReviewCursor reviewCursor = where.query(getActivity());
+                        if (!reviewCursor.moveToFirst()) {
+                            for (Review review : reviewList) {
+                                Utility.addReviewToContentProvider(movie.getId(), review);
+                            }
                         }
                     }
                 }
