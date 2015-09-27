@@ -119,11 +119,9 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        if (menu.findItem(R.id.share_action) == null) {
             inflater.inflate(R.menu.menu_detail, menu);
             menuItem = menu.findItem(R.id.share_action);
             menuItem.setVisible(trailerFound);
-        }
     }
 
     private Intent createShareIntent(String movie_name, String trailer_name, String key) {
