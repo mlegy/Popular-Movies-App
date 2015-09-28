@@ -67,7 +67,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                         PicassoPalette
                                 .with(movie.getPosterURI("w500", "poster").toString(), moviesViewHolder.imageView)
                                 .use(PicassoPalette.Profile.VIBRANT)
-                                .intoBackground(moviesViewHolder.movieTitleHolder)
+                                .intoBackground(moviesViewHolder.full_layout)
                                 .intoTextColor(moviesViewHolder.titleView, PicassoPalette.Swatch.BODY_TEXT_COLOR));
 
         //Setting text view title
@@ -104,6 +104,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     }
 
     public class MoviesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private final LinearLayout full_layout;
         protected LinearLayout movieHolder;
         protected LinearLayout movieTitleHolder;
         protected ImageView imageView;
@@ -112,12 +113,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
         public MoviesViewHolder(View view) {
             super(view);
+            this.full_layout = (LinearLayout) view.findViewById(R.id.movie_layout);
             this.movieHolder = (LinearLayout) view.findViewById(R.id.movieHolder);
             this.movieTitleHolder = (LinearLayout) view.findViewById(R.id.movieTitleHolder);
             this.imageView = (ImageView) view.findViewById(R.id.thumbnail);
             this.titleView = (TextView) view.findViewById(R.id.title);
             this.favouriteButton = (ToggleButton) view.findViewById(R.id.favouriteButton);
-            this.movieHolder.setOnClickListener(this);
+            this.full_layout.setOnClickListener(this);
         }
 
         @Override

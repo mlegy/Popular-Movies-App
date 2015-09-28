@@ -18,14 +18,13 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
 
     private static final String TAG_FRAGMENT = "MOVIE_FRAGMENT";
     private boolean mTwoPane;
-    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        toolbar = (Toolbar) findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);                   // Setting toolbar as the ActionBar with setSupportActionBar() call
 
         if (findViewById(R.id.movie_detail_container) != null) {
