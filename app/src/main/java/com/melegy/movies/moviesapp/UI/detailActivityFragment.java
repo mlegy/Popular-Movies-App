@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -61,6 +64,8 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     private String trailer_title;
     private String trailer_key;
     private boolean trailerFound;
+    private Toolbar toolbar;
+    private boolean mTwoPane;
 
     public detailActivityFragment() {
         setHasOptionsMenu(true);
@@ -71,14 +76,32 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_detail, container, false);
+
         Utility utility = new Utility(getActivity());
         Bundle arguments = getArguments();
         if (arguments != null) {
             hasArguments = true;
             if (arguments.getBoolean("twoPane")) {
+                mTwoPane = true;
                 movie = arguments.getParcelable("movie");
             } else {
                 movie = getActivity().getIntent().getExtras().getParcelable("movie");
+
+                toolbar = (Toolbar) view.findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
+                AppCompatActivity activity = (AppCompatActivity) getActivity();
+                activity.setSupportActionBar(toolbar);
+                activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+                final ImageView header_imageView = (ImageView) view.findViewById(R.id.poster);
+                Picasso
+                        .with(getActivity())
+                        .load(movie.getPosterURI("w780", "backdrop"))
+                        .into(header_imageView);
+
+                CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout)
+                        view.findViewById(R.id.collapsingToolbarLayout);
+                toolbarLayout.setTitle(movie.getTitle());
+
             }
             assert movie != null;
             isFavoured = Utility.isFavoured(movie.getId());
@@ -167,8 +190,10 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                 .load(movie.getPosterURI("w500", "poster"))
                 .into(poster_imageView);
 
-        TextView movie_title = (TextView) view.findViewById(R.id.movieTitle);
-        movie_title.setText(movie.getTitle());
+        if (mTwoPane) {
+            TextView movie_title = (TextView) view.findViewById(R.id.movieTitle);
+            movie_title.setText(movie.getTitle());
+        }
 
         String release_date = movie.getRelease_date();
         if (release_date.contains("-")) {

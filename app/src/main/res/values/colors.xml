@@ -7,4 +7,5 @@
     <color name="accent">#E22F84</color>
     <color name="light_gray">#d3d3d3</color>
     <color name="photo_tint">#7f101010</color>
+    <color name="transparent">#80000000</color>
 </resources>

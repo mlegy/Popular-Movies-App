@@ -2,6 +2,7 @@
 <resources>
 
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:actionOverflowButtonStyle">@style/Widget.ActionButton.Overflow</item>
         <item name="android:colorPrimary">@color/primary</item>
         <item name="android:colorPrimaryDark">@color/primary_dark</item>
         <item name="android:colorAccent">@color/accent</item>
@@ -9,4 +10,9 @@
         <item name="android:displayOptions">disableHome</item>
         <item name="android:windowContentTransitions">true</item>
     </style>
+
+    <style name="Widget.ActionButton.Overflow" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+        <item name="android:contentDescription">"accessibility_overflow"</item>
+    </style>
+
 </resources>
