@@ -43,7 +43,7 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
     }
 
     @Override
-    public void onItemSelected(Movie movie) {
+    public void onItemSelected(Movie movie, View view) {
         if (mTwoPane) {
             Bundle args = new Bundle();
             args.putBoolean("twoPane", true);
@@ -60,8 +60,8 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
 
             // Check if we're running on Android 5.0 or higher
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ImageView moviePoster = (ImageView) findViewById(R.id.thumbnail);
-                TextView movieTitle = (TextView) findViewById(R.id.title);
+                ImageView moviePoster = (ImageView) view.findViewById(R.id.thumbnail);
+                TextView movieTitle = (TextView) view.findViewById(R.id.title);
                 Pair<View, String> p1 = Pair.create((View) moviePoster, "movie_poster");
                 Pair<View, String> p2 = Pair.create((View) movieTitle, "movie_title");
                 ActivityOptionsCompat options = ActivityOptionsCompat.

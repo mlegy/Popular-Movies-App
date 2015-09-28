@@ -95,7 +95,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                 final ImageView header_imageView = (ImageView) view.findViewById(R.id.poster);
                 Picasso
                         .with(getActivity())
-                        .load(movie.getPosterURI("w780", "backdrop"))
+                        .load(movie.getPosterURI("w500", "backdrop"))
                         .into(header_imageView);
 
                 CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout)

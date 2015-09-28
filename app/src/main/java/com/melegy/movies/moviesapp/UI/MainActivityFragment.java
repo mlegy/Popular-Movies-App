@@ -203,7 +203,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                 } else {
                     mMovie = (Movie) all_movies.toArray()[position];
                 }
-                ((Callback) getActivity()).onItemSelected(mMovie);
+                ((Callback) getActivity()).onItemSelected(mMovie, v);
             }
         };
         adapter.setOnItemClickListener(onItemClickListener);
@@ -255,7 +255,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         /**
          * callback for when an item has been selected.
          */
-        void onItemSelected(Movie movie);
+        void onItemSelected(Movie movie, View view);
     }
 
     public class fetchMoviesTask extends AsyncTask<String, Void, Collection<Movie>> {

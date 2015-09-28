@@ -62,10 +62,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
         //Download image using picasso library
         Picasso.with(context)
-                .load(movie.getPosterURI("w185", "poster"))
+                .load(movie.getPosterURI("w500", "poster"))
                 .into(moviesViewHolder.imageView,
                         PicassoPalette
-                                .with(movie.getPosterURI("w185", "poster").toString(), moviesViewHolder.imageView)
+                                .with(movie.getPosterURI("w500", "poster").toString(), moviesViewHolder.imageView)
                                 .use(PicassoPalette.Profile.VIBRANT)
                                 .intoBackground(moviesViewHolder.movieTitleHolder)
                                 .intoTextColor(moviesViewHolder.titleView, PicassoPalette.Swatch.BODY_TEXT_COLOR));
