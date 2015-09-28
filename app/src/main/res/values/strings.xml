@@ -2,15 +2,11 @@
     <string name="app_name">Movies App</string>
 
     <string name="title_activity_detail">Movie Details</string>
-    <string name="action_sorty_type">Sort By</string>
     <string name="action_sort_popularity">Popularity</string>
     <string name="action_sort_rating">Rating</string>
     <string name="pref_sort_type">sort_type</string>
     <string name="pref_sort_popularity">popularity.desc</string>
     <string name="pref_sort_type_rating">vote_average.desc</string>
-    <string name="mark_fav">MARK AS FAVOURITE</string>
-    <string name="mark_unfav">REMOVE FROM FAVOURITES</string>
-    <string name="trailer_title">Trailer</string>
 
     <string name="content_authority">com.melegey.movies.moviesapp</string>
     <string name="action_favourites">Favourites</string>

@@ -4,7 +4,6 @@
     android:id="@+id/placeCard"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
     card_view:cardCornerRadius="@dimen/card_corner_radius"
     card_view:cardElevation="@dimen/card_elevation">
 
@@ -40,7 +39,7 @@
             android:paddingLeft="10dp"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="@android:color/white"
-            android:textSize="18sp"
+            android:textSize="15sp"
             android:transitionName="movie_title" />
 
         <ToggleButton
