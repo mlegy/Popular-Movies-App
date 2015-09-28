@@ -2,7 +2,7 @@
 <resources>
     <color name="detail_movie_header">#009688</color>
     <color name="detail_text">#757575</color>
-    <color name="primary">#FFFFFF</color>
+    <color name="primary">#009688</color>
     <color name="primary_dark">#6C7F91</color>
     <color name="accent">#E22F84</color>
     <color name="light_gray">#d3d3d3</color>
