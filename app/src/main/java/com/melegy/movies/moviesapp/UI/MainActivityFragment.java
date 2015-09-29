@@ -55,10 +55,11 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     private EndlessRecyclerViewAdapter endlessRecyclerViewAdapter;
     private LinearLayoutManager mStaggeredLayoutManager;
     private MenuItem action_show_fav;
+    private SharedPreferences prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         sort_type = prefs.getString(getString(R.string.pref_sort_type), "popularity.desc");
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
@@ -142,6 +143,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                     showFavourites = false;
                     sort_type = getResources().getString(R.string.pref_sort_popularity);
                     updateView();
+                    prefs.edit().putString(getString(R.string.pref_sort_type), sort_type).apply();
                 } else {
                     navigateToFavourites(action_show_fav, false);
                 }
@@ -157,6 +159,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                     showFavourites = false;
                     sort_type = getResources().getString(R.string.pref_sort_type_rating);
                     updateView();
+                    prefs.edit().putString(getString(R.string.pref_sort_type), sort_type).apply();
                 } else {
                     navigateToFavourites(action_show_fav, false);
                 }
