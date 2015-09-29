@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="detail_movie_header">#2196F3</color>
-    <color name="detail_text">#757575</color>
-    <color name="primary">#2196F3</color>
-    <color name="primary_dark">#6C7F91</color>
+    <color name="detail_movie_header">#303F9F</color>
+    <color name="detail_text">#727272</color>
+    <color name="primary">#3F51B5</color>
+    <color name="primary_dark">#303F9F</color>
     <color name="accent">#E22F84</color>
     <color name="light_gray">#d3d3d3</color>
     <color name="photo_tint">#7f101010</color>
