@@ -11,7 +11,9 @@
         android:id="@+id/movie_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:background="@color/detail_text"
+        android:orientation="vertical"
+        android:padding="5dp">
     <ImageView
         android:id="@+id/thumbnail"
         android:layout_width="match_parent"

@@ -65,10 +65,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                 .load(movie.getPosterURI("w500", "poster"))
                 .into(moviesViewHolder.imageView,
                         PicassoPalette
-                                .with(movie.getPosterURI("w500", "poster").toString(), moviesViewHolder.imageView)
+                                .with(movie.getPosterURI("w500", "poster").toString(),
+                                        moviesViewHolder.imageView)
                                 .use(PicassoPalette.Profile.VIBRANT)
-                                .intoBackground(moviesViewHolder.full_layout)
-                                .intoTextColor(moviesViewHolder.titleView, PicassoPalette.Swatch.BODY_TEXT_COLOR));
+                                .intoBackground(moviesViewHolder.full_layout,
+                                        PicassoPalette.Swatch.RGB)
+                                .intoTextColor(moviesViewHolder.titleView,
+                                        PicassoPalette.Swatch.TITLE_TEXT_COLOR));
 
         //Setting text view title
         moviesViewHolder.titleView.setText(movie.getTitle());
