@@ -1,11 +1,16 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:focusableInTouchMode="true">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/tool_bar" />
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:focusableInTouchMode="true">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
@@ -15,49 +20,35 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/detail_movie_header">
-
-                <TextView
-                    android:id="@+id/movieTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="15dp"
-                    android:paddingRight="15dp"
-                    android:textAppearance="?android:textAppearanceLarge"
-                    android:textColor="@android:color/white"
-                    android:transitionName="movie_title" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
                 android:orientation="horizontal"
                 android:paddingTop="5dp"
                 android:weightSum="5">
 
-                <ImageView
-                    android:id="@+id/moviePoster"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:adjustViewBounds="true"
-                    android:maxWidth="300dp"
-                    android:padding="15dp"
-                    android:transitionName="movie_poster" />
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/moviePoster"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center_horizontal"
+                        android:minHeight="250dp"
+                        android:minWidth="300dp"
+                        android:transitionName="movie_poster" />
+                </FrameLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/details_layout"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:layout_weight="2"
+                        android:layout_weight="1"
+                        android:minWidth="200dp"
                         android:orientation="vertical"
                         android:paddingTop="15dp">
 
@@ -159,6 +150,6 @@
 
             </LinearLayout>
         </LinearLayout>
-    </RelativeLayout>
 
-</ScrollView>
+    </ScrollView>
+</LinearLayout>

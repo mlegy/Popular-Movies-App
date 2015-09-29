@@ -1,6 +1,7 @@
 package com.melegy.movies.moviesapp.UI;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -87,21 +88,29 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
             } else {
                 movie = getActivity().getIntent().getExtras().getParcelable("movie");
 
+                Configuration config = getActivity().getResources().getConfiguration();
+                if (getResources().getConfiguration().orientation
+                        == Configuration.ORIENTATION_PORTRAIT) {
+
+                    toolbar = (Toolbar) view.findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
+                    AppCompatActivity activity = (AppCompatActivity) getActivity();
+                    activity.setSupportActionBar(toolbar);
+                    activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+                    CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout)
+                            view.findViewById(R.id.collapsingToolbarLayout);
+                    toolbarLayout.setTitle(movie.getTitle());
+                    final ImageView header_imageView = (ImageView) view.findViewById(R.id.poster);
+                    Picasso
+                            .with(getActivity())
+                            .load(movie.getPosterURI("w500", "backdrop"))
+                            .into(header_imageView);
+
+                }
                 toolbar = (Toolbar) view.findViewById(R.id.tool_bar); // Attaching the layout to the toolbar object
                 AppCompatActivity activity = (AppCompatActivity) getActivity();
                 activity.setSupportActionBar(toolbar);
                 activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-                final ImageView header_imageView = (ImageView) view.findViewById(R.id.poster);
-                Picasso
-                        .with(getActivity())
-                        .load(movie.getPosterURI("w500", "backdrop"))
-                        .into(header_imageView);
-
-                CollapsingToolbarLayout toolbarLayout = (CollapsingToolbarLayout)
-                        view.findViewById(R.id.collapsingToolbarLayout);
-                toolbarLayout.setTitle(movie.getTitle());
-
             }
             assert movie != null;
             isFavoured = Utility.isFavoured(movie.getId());

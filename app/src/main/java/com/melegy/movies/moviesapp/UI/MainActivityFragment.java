@@ -76,6 +76,9 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         if (config.smallestScreenWidthDp >= 600
                 && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)) {
             mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 1);
+        } else if (config.smallestScreenWidthDp < 600
+                && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)) {
+            mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 3);
         } else {
             mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 2);
         }
