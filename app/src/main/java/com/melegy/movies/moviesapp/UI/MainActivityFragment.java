@@ -115,6 +115,23 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
             }
         }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(getResources().getString(R.string.sort_type), sort_type);
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            sort_type = savedInstanceState.getString(getResources().getString(R.string.sort_type));
+        } else {
+            sort_type = getResources().getString(R.string.sort_popularity);
+        }
+    }
+
     private void navigateToFavourites(MenuItem action_show_fav, boolean onCreate) {
         action_show_fav.setChecked(true);
         sort_type = getResources().getString(R.string.sort_type_fav);

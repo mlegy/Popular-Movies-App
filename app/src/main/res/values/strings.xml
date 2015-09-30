@@ -4,6 +4,7 @@
     <string name="title_activity_detail">Movie Details</string>
     <string name="action_sort_popularity">Popularity</string>
     <string name="action_sort_rating">Rating</string>
+    <string name="sort_type">sort_type</string>
     <string name="sort_popularity">popularity.desc</string>
     <string name="sort_type_rating">vote_average.desc</string>
     <string name="sort_type_fav">fav</string>
