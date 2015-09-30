@@ -15,8 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.melegy.movies.moviesapp.Adapters.MoviesAdapter;
 import com.melegy.movies.moviesapp.Model.Movie;
@@ -51,7 +51,8 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     private ProgressBar progressBar;
     private EndlessRecyclerViewAdapter endlessRecyclerViewAdapter;
     private LinearLayoutManager mStaggeredLayoutManager;
-    private MenuItem action_show_fav;
+    private ImageView no_favourites;
+    private boolean connection_first_check;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,7 +69,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
 
         RecyclerView moviesRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
 
-        Configuration config = getActivity().getResources().getConfiguration();
+        Configuration config = view.getResources().getConfiguration();
         if (config.smallestScreenWidthDp >= 600
                 && (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)) {
             mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 1);
@@ -88,7 +89,21 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         progressBar.setVisibility(View.VISIBLE);
 
+        no_favourites = (ImageView) view.findViewById(R.id.no_fav);
+
+        connection_first_check = Utility.isNetworkAvailable();
+        if (!connection_first_check) navigateToFavourites();
+
         return view;
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        if (!connection_first_check) {
+            menu.findItem(R.id.action_favourites).setChecked(!connection_first_check);
+            connection_first_check = true;
+        }
     }
 
     @Override
@@ -96,11 +111,9 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         inflater.inflate(R.menu.menu_main, menu);
         MenuItem action_sort_by_popularity = menu.findItem(R.id.action_sort_by_popularity);
         MenuItem action_sort_by_rating = menu.findItem(R.id.action_sort_by_rating);
-        action_show_fav = menu.findItem(R.id.action_favourites);
+        MenuItem action_show_fav = menu.findItem(R.id.action_favourites);
 
-        if (!Utility.isNetworkAvailable()) {
-            navigateToFavourites(action_show_fav, true);
-        } else if (sort_type.contentEquals(getResources().getString(R.string.sort_popularity))) {
+        if (sort_type.contentEquals(getResources().getString(R.string.sort_popularity))) {
             if (!action_sort_by_popularity.isChecked()) {
                 action_sort_by_popularity.setChecked(true);
             }
@@ -111,8 +124,47 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         } else if (sort_type.contentEquals(getResources().getString(R.string.sort_type_fav))) {
             if (!action_show_fav.isChecked()) {
                 action_show_fav.setChecked(true);
-                navigateToFavourites(action_show_fav, true);
+                navigateToFavourites();
             }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.action_sort_by_popularity:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                    prepareUpdate();
+                }
+                sort_type = getResources().getString(R.string.sort_popularity);
+                updateView();
+                return true;
+            case R.id.action_sort_by_rating:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                    prepareUpdate();
+                }
+                sort_type = getResources().getString(R.string.sort_type_rating);
+                updateView();
+                return true;
+            case R.id.action_favourites:
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                } else {
+                    item.setChecked(true);
+                    prepareUpdate();
+                }
+                sort_type = getResources().getString(R.string.sort_type_fav);
+                updateView();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -132,63 +184,19 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         }
     }
 
-    private void navigateToFavourites(MenuItem action_show_fav, boolean onCreate) {
-        action_show_fav.setChecked(true);
-        sort_type = getResources().getString(R.string.sort_type_fav);
-        updateView();
-        if (!onCreate) {
-            Toast.makeText(getActivity(),
-                    "No internet connection, Navigated to your favourite movies",
-                    Toast.LENGTH_SHORT)
-                    .show();
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Checks the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 1);
+
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case R.id.action_sort_by_popularity:
-                if (Utility.isNetworkAvailable()) {
-                    if (item.isChecked()) {
-                        item.setChecked(false);
-                    } else {
-                        item.setChecked(true);
-                        prepareUpdate();
-                    }
-                    sort_type = getResources().getString(R.string.sort_popularity);
-                    updateView();
-                } else {
-                    navigateToFavourites(action_show_fav, false);
-                }
-                return true;
-            case R.id.action_sort_by_rating:
-                if (Utility.isNetworkAvailable()) {
-                    if (item.isChecked()) {
-                        item.setChecked(false);
-                    } else {
-                        item.setChecked(true);
-                        prepareUpdate();
-                    }
-                    sort_type = getResources().getString(R.string.sort_type_rating);
-                    updateView();
-                } else {
-                    navigateToFavourites(action_show_fav, false);
-                }
-                return true;
-            case R.id.action_favourites:
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                } else {
-                    item.setChecked(true);
-                    prepareUpdate();
-                }
-                sort_type = getResources().getString(R.string.sort_type_fav);
-                updateView();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+    private void navigateToFavourites() {
+        sort_type = getResources().getString(R.string.sort_type_fav);
+        updateView();
     }
 
     private void prepareUpdate() {
@@ -206,6 +214,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         if (sort_type.contentEquals(getResources().getString(R.string.sort_type_fav))) {
             fetchFavouritesMovies();
         } else {
+            no_favourites.setVisibility(View.GONE);
             fetchMoviesTask task = new fetchMoviesTask();
             task.execute(String.valueOf(page_num));
         }
@@ -227,16 +236,6 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         adapter.setOnItemClickListener(onItemClickListener);
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        // Checks the orientation of the screen
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            mStaggeredLayoutManager = new GridLayoutManager(getActivity(), 1);
-
-        }
-    }
-
     private void fetchFavouritesMovies() {
         MovieSelection where = new MovieSelection();
         MovieCursor movieCursor = where.query(getActivity());
@@ -253,7 +252,15 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         adapter.addMovies(favouriteMovies);
         endlessRecyclerViewAdapter.onDataReady(true);
         adapter.notifyDataSetChanged();
-        setOnClickListenerOnItems(favouriteMovies);
+        progressBar.setVisibility(View.GONE);
+        if (favouriteMovies.size() > 0) {
+            no_favourites.setVisibility(View.GONE);
+            setOnClickListenerOnItems(favouriteMovies);
+        } else {
+            if (getFragmentManager().findFragmentById(R.id.fragment) != null) {
+                no_favourites.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override
@@ -286,7 +293,6 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                 return null;
             }
             String page_num = params[0];
-            Log.i("PAGE_NUM", page_num);
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
