@@ -4,9 +4,9 @@
     <string name="title_activity_detail">Movie Details</string>
     <string name="action_sort_popularity">Popularity</string>
     <string name="action_sort_rating">Rating</string>
-    <string name="pref_sort_type">sort_type</string>
-    <string name="pref_sort_popularity">popularity.desc</string>
-    <string name="pref_sort_type_rating">vote_average.desc</string>
+    <string name="sort_popularity">popularity.desc</string>
+    <string name="sort_type_rating">vote_average.desc</string>
+    <string name="sort_type_fav">fav</string>
 
     <string name="content_authority">com.melegey.movies.moviesapp</string>
     <string name="action_favourites">Favourites</string>

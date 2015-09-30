@@ -1,11 +1,9 @@
 package com.melegy.movies.moviesapp.UI;
 
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,16 +49,13 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     private MoviesAdapter adapter;
     private String sort_type;
     private ProgressBar progressBar;
-    private boolean showFavourites;
     private EndlessRecyclerViewAdapter endlessRecyclerViewAdapter;
     private LinearLayoutManager mStaggeredLayoutManager;
     private MenuItem action_show_fav;
-    private SharedPreferences prefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        sort_type = prefs.getString(getString(R.string.pref_sort_type), "popularity.desc");
+        sort_type = getResources().getString(R.string.sort_popularity);
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -105,20 +100,24 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
 
         if (!Utility.isNetworkAvailable()) {
             navigateToFavourites(action_show_fav, true);
-        } else if (sort_type.contentEquals(getResources().getString(R.string.pref_sort_popularity))) {
+        } else if (sort_type.contentEquals(getResources().getString(R.string.sort_popularity))) {
             if (!action_sort_by_popularity.isChecked()) {
                 action_sort_by_popularity.setChecked(true);
             }
-        } else if (sort_type.contentEquals(getResources().getString(R.string.pref_sort_type_rating))) {
+        } else if (sort_type.contentEquals(getResources().getString(R.string.sort_type_rating))) {
             if (!action_sort_by_rating.isChecked()) {
                 action_sort_by_rating.setChecked(true);
             }
+        } else if (sort_type.contentEquals(getResources().getString(R.string.sort_type_fav))) {
+            if (!action_show_fav.isChecked()) {
+                action_show_fav.setChecked(true);
+                navigateToFavourites(action_show_fav, true);
+            }
         }
     }
-
     private void navigateToFavourites(MenuItem action_show_fav, boolean onCreate) {
         action_show_fav.setChecked(true);
-        showFavourites = true;
+        sort_type = getResources().getString(R.string.sort_type_fav);
         updateView();
         if (!onCreate) {
             Toast.makeText(getActivity(),
@@ -140,10 +139,8 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                         item.setChecked(true);
                         prepareUpdate();
                     }
-                    showFavourites = false;
-                    sort_type = getResources().getString(R.string.pref_sort_popularity);
+                    sort_type = getResources().getString(R.string.sort_popularity);
                     updateView();
-                    prefs.edit().putString(getString(R.string.pref_sort_type), sort_type).apply();
                 } else {
                     navigateToFavourites(action_show_fav, false);
                 }
@@ -156,10 +153,8 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                         item.setChecked(true);
                         prepareUpdate();
                     }
-                    showFavourites = false;
-                    sort_type = getResources().getString(R.string.pref_sort_type_rating);
+                    sort_type = getResources().getString(R.string.sort_type_rating);
                     updateView();
-                    prefs.edit().putString(getString(R.string.pref_sort_type), sort_type).apply();
                 } else {
                     navigateToFavourites(action_show_fav, false);
                 }
@@ -171,7 +166,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                     item.setChecked(true);
                     prepareUpdate();
                 }
-                showFavourites = true;
+                sort_type = getResources().getString(R.string.sort_type_fav);
                 updateView();
                 return true;
             default:
@@ -191,7 +186,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     }
 
     private void updateView() {
-        if (showFavourites) {
+        if (sort_type.contentEquals(getResources().getString(R.string.sort_type_fav))) {
             fetchFavouritesMovies();
         } else {
             fetchMoviesTask task = new fetchMoviesTask();
@@ -204,7 +199,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
             @Override
             public void onItemClick(View v, int position) {
                 Movie mMovie;
-                if (showFavourites) {
+                if (sort_type.contentEquals(getResources().getString(R.string.sort_type_fav))) {
                     mMovie = (Movie) movies.toArray()[position];
                 } else {
                     mMovie = (Movie) all_movies.toArray()[position];
@@ -246,7 +241,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
 
     @Override
     public void onLoadMoreRequested() {
-        if (!showFavourites) {
+        if (!sort_type.contentEquals(getResources().getString(R.string.sort_type_fav))) {
             page_num += 1;
             updateView();
         }
