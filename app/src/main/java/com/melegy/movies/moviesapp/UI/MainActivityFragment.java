@@ -215,7 +215,6 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     }
 
     private void updateView() {
-        Log.i("STRING", sort_type);
         if (sort_type.contentEquals(getResources().getString(R.string.sort_type_fav))) {
             fetchFavouritesMovies();
         } else {
@@ -272,20 +271,16 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
             no_favourites_icon.setVisibility(View.GONE);
             setOnClickListenerOnItems(favouriteMovies);
         } else {
-//            if (getFragmentManager().findFragmentById(R.id.fragment) != null) {
             no_favourites_icon.setVisibility(View.VISIBLE);
-            //}
         }
     }
 
     @Override
     public void onLoadMoreRequested() {
-        Log.i("STRING", "SORT_TYPE " + sort_type);
         if (sort_type != null
                 && !sort_type.contentEquals(getResources().getString(R.string.sort_type_fav))
                 ) {
             first_check = false;
-            Log.i("STRING", "PAGE" + page_num);
             page_num += 1;
             updateView();
         }
