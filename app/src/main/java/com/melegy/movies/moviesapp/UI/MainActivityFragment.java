@@ -106,7 +106,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     @Override
     public void onResume() {
         super.onResume();
-        adapter.notifyDataSetChanged();
+        updateView();
     }
 
     @Override
@@ -275,6 +275,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
         disconnected_icon.setVisibility(View.GONE);
         if (favouriteMovies.size() > 0) {
             no_favourites_icon.setVisibility(View.GONE);
+            moviesRecyclerView.setVisibility(View.VISIBLE);
             setOnClickListenerOnItems(favouriteMovies);
         } else {
             no_favourites_icon.setVisibility(View.VISIBLE);
