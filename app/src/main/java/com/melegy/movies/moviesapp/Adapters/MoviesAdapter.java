@@ -56,8 +56,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                             Utility.removeFromFavourites(movie.getId());
                         }
                     }
-                    }
                 }
+            }
         });
 
         //Download image using picasso library
@@ -98,6 +98,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
             this.notifyItemRangeRemoved(0, size);
         }
     }
+
     public void setOnItemClickListener(final OnItemClickListener mItemClickListener) {
         this.mItemClickListener = mItemClickListener;
     }

@@ -14,52 +14,53 @@
         android:background="@color/detail_text"
         android:orientation="vertical"
         android:padding="5dp">
-    <ImageView
-        android:id="@+id/thumbnail"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:transitionName="movie_poster" />
 
-    <!-- Used for the ripple effect on touch -->
-    <LinearLayout
-        android:id="@+id/movieHolder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?android:selectableItemBackground"
-        android:orientation="horizontal" />
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:transitionName="movie_poster" />
 
-    <LinearLayout
-        android:id="@+id/movieTitleHolder"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="bottom"
-        android:orientation="horizontal"
-        android:weightSum="4">
+        <!-- Used for the ripple effect on touch -->
+        <LinearLayout
+            android:id="@+id/movieHolder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?android:selectableItemBackground"
+            android:orientation="horizontal" />
 
-        <TextView
-            android:id="@+id/title"
-            style="@style/MovieItemText"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="3"
-            android:gravity="left"
-            android:paddingLeft="10dp"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/white"
-            android:textSize="15sp"
-            android:transitionName="movie_title" />
+        <LinearLayout
+            android:id="@+id/movieTitleHolder"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal"
+            android:weightSum="4">
 
-        <ToggleButton
-            android:id="@+id/favouriteButton"
-            style="@style/FavoriteButton"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="1"
-            android:background="@drawable/fav_click_selector"
-            android:textOff=""
-            android:textOn="" />
+            <TextView
+                android:id="@+id/title"
+                style="@style/MovieItemText"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="3"
+                android:gravity="left"
+                android:paddingLeft="10dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                android:transitionName="movie_title" />
 
-    </LinearLayout>
+            <ToggleButton
+                android:id="@+id/favouriteButton"
+                style="@style/FavoriteButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/fav_click_selector"
+                android:textOff=""
+                android:textOn="" />
+
+        </LinearLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

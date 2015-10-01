@@ -65,7 +65,6 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     private String trailer_title;
     private String trailer_key;
     private boolean trailerFound;
-    private Toolbar toolbar;
     private boolean mTwoPane;
 
     public detailActivityFragment() {
@@ -89,6 +88,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
                 movie = getActivity().getIntent().getExtras().getParcelable("movie");
 
                 Configuration config = getActivity().getResources().getConfiguration();
+                Toolbar toolbar;
                 if (getResources().getConfiguration().orientation
                         == Configuration.ORIENTATION_PORTRAIT) {
 
@@ -254,17 +254,17 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
         if (favouriteReviews.size() > 0) {
             if (isAdded()) {
                 TextView reviews_title = (TextView) getActivity().findViewById(R.id.reviews_title);
-            reviews_title.setVisibility(View.VISIBLE);
-            mReviews = new ArrayList<>();
-            mReviews.addAll(favouriteReviews);
-            ReviewsAdapter mReviewsAdapter = new ReviewsAdapter(getActivity(), mReviews);
-            LinearLayout reviewsListView = (LinearLayout) getActivity()
-                    .findViewById(R.id.list_item_reviews);
-            for (int i = 0; i < mReviewsAdapter.getCount(); i++) {
-                View view = mReviewsAdapter.getView(i, null, null);
-                reviewsListView.addView(view);
+                reviews_title.setVisibility(View.VISIBLE);
+                mReviews = new ArrayList<>();
+                mReviews.addAll(favouriteReviews);
+                ReviewsAdapter mReviewsAdapter = new ReviewsAdapter(getActivity(), mReviews);
+                LinearLayout reviewsListView = (LinearLayout) getActivity()
+                        .findViewById(R.id.list_item_reviews);
+                for (int i = 0; i < mReviewsAdapter.getCount(); i++) {
+                    View view = mReviewsAdapter.getView(i, null, null);
+                    reviewsListView.addView(view);
+                }
             }
-        }
         }
     }
 
