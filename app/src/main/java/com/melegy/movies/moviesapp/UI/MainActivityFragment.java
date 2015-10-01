@@ -104,6 +104,12 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         if (!connected && first_check) {
