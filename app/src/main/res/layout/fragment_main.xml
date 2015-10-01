@@ -25,4 +25,13 @@
         android:src="@drawable/broken_heart"
         android:visibility="gone" />
 
+    <ImageView
+        android:id="@+id/no_connection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/disconnected"
+        android:visibility="gone" />
+
+
 </RelativeLayout>
