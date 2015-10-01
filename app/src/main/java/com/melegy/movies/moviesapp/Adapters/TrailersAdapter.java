@@ -40,6 +40,8 @@ public class TrailersAdapter extends ArrayAdapter<Trailer> {
         }
 
         viewHolder.trailer_title.setText(trailer.getName());
+        viewHolder.trailer_title.setContentDescription(trailer.getName());
+
         Picasso.with(getContext()) //
                 .load("http://img.youtube.com/vi/" + trailer.getKey() + "/0.jpg") //
                 .into(viewHolder.trailer_thumbnail);

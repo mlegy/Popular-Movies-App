@@ -38,8 +38,10 @@ public class ReviewsAdapter extends ArrayAdapter<Review> {
         }
 
         viewHolder.review_author.setText(review.getAuthor());
-        viewHolder.review_content.setText(review.getContent());
+        viewHolder.review_author.setContentDescription(review.getAuthor());
 
+        viewHolder.review_content.setText(review.getContent());
+        viewHolder.review_content.setContentDescription(review.getContent());
         return convertView;
 
     }

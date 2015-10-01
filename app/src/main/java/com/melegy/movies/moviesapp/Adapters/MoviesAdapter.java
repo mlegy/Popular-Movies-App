@@ -75,6 +75,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
         //Setting text view title
         moviesViewHolder.titleView.setText(movie.getTitle());
+        moviesViewHolder.titleView.setContentDescription(movie.getTitle());
 
     }
 

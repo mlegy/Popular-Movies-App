@@ -284,9 +284,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
     @Override
     public void onLoadMoreRequested() {
         if (sort_type != null
-                && !sort_type.contentEquals(getResources().getString(R.string.sort_type_fav))
-                ) {
-            first_check = false;
+                && !sort_type.contentEquals(getResources().getString(R.string.sort_type_fav))) {
             page_num += 1;
             updateView();
         }
