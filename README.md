@@ -35,6 +35,9 @@ For more info about the project please check the project [wiki](https://docs.goo
     ![alt text](../master/art/device-2015-10-01-201941.png "Tablet Main Activity - Landscape")
     ![alt text](../master/art/device-2015-10-01-202119.png "Tablet Main Activity - Portrait")
 
+## How to build the App:
+You have to replace the variable `sensitiveData.API_KEY` with your API Key from [The Movie Database](https://www.themoviedb.org/documentation/api)
+
 ## Libraries:
 - [Picasso](http://square.github.io/picasso/)
 - [OkHttp](http://square.github.io/okhttp/)
@@ -42,9 +45,10 @@ For more info about the project please check the project [wiki](https://docs.goo
 - [EndlessRecyclerViewAdapter](https://github.com/rockerhieu/rv-adapter-endless)
 
 ## Credits:
-- ![alt text](../master/app/src/main/res/mipmap-hdpi/ic_launcher.png "Launcher Icon") Icon made by [Catalin Fertu](http://www.flaticon.com/authors/catalin-fertu) from www.flaticon.com.
-- ![alt text](../master/app/src/main/res/drawable/disconnected.png "No Connection") Icon made by [freepik](http://www.flaticon.com/authors/freepik) from www.flaticon.com.
-- ![alt text](../master/amaster/app/src/main/res/drawable-xxxhdpi/broken_heart.png "No favourites image") Heart vector designed by [Freepik] (http://www.freepik.com/free-photos-vectors/heart).
+- ![alt text](../master/art/ic_launcher.png) Icon made by [Catalin Fertu](http://www.flaticon.com/authors/catalin-fertu) from www.flaticon.com.
+- ![alt text](../master/art/disconnected.png "No Connection") Icon made by [freepik](http://www.flaticon.com/authors/freepik) from www.flaticon.com.
+- ![alt text](../master/art/ic_play_arrow.png "Youtube logo") Icon made by [Google](http://www.flaticon.com/authors/google) from www.flaticon.com.
+- ![alt text](../master/art/broken_heart.png "No favourites image") Heart vector designed by [Freepik] (http://www.freepik.com/free-photos-vectors/heart).
 
 
 ## License:
