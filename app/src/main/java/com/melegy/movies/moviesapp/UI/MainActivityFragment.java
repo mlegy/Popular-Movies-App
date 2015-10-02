@@ -228,7 +228,6 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                 disconnected_icon.setVisibility(View.GONE);
                 no_favourites_icon.setVisibility(View.GONE);
                 moviesRecyclerView.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.VISIBLE);
                 fetchMoviesTask task = new fetchMoviesTask();
                 task.execute(String.valueOf(page_num));
             } else {
