@@ -2,6 +2,8 @@
 
 This is my version of `Popular Movies App` The final project of the Udacity course [Developing Android Apps: Android Fundamentals](https://www.udacity.com/course/ud853).
 
+This App is graded as `Exceeds Specifications` by the `Udacity Team`.
+
 For more info about the project please check the project [wiki](https://docs.google.com/document/d/1ZlN1fUsCSKuInLECcJkslIqvpKlP7jWL2TP9m6UiA6I/pub?embedded=true) by udacity.
 
 Signed APK can be found [here](../master/app/app-release.apk).
