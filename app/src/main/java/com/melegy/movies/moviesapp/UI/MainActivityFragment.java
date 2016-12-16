@@ -323,10 +323,8 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                 final String TMDB_URI_SCHEME = "http";
                 final String TMDB_URI_AUTHORITY = "api.themoviedb.org";
                 final String TMDB_URI_FIRST_PATH = "3";
-                final String TMDB_URI_SECOND_PATH = "discover";
-                final String TMDB_URI_THIRD_PATH = "movie";
+                final String TMDB_URI_SECOND_PATH = "movie";
                 final String API_PARAM = "api_key";
-                final String SORT_PARAM = "sort_by";
                 final String PAGE_PARAM = "page";
 
                 Uri.Builder builder = new Uri.Builder();
@@ -334,9 +332,8 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                         .authority(TMDB_URI_AUTHORITY)
                         .appendPath(TMDB_URI_FIRST_PATH)
                         .appendPath(TMDB_URI_SECOND_PATH)
-                        .appendPath(TMDB_URI_THIRD_PATH)
+                        .appendPath(sort_type)
                         .appendQueryParameter(API_PARAM, sensitiveData.API_KEY)
-                        .appendQueryParameter(SORT_PARAM, sort_type)
                         .appendQueryParameter(PAGE_PARAM, page_num);
 
                 String myUrl = builder.build().toString();
