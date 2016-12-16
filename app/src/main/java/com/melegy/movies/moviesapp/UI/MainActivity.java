@@ -31,7 +31,7 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
             mTwoPane = true;
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
-                        .add(R.id.movie_detail_container, new detailActivityFragment(), TAG_FRAGMENT)
+                        .add(R.id.movie_detail_container, new DetailActivityFragment(), TAG_FRAGMENT)
                         .commit();
             }
         } else {
@@ -47,14 +47,14 @@ public class MainActivity extends ActionBarActivity implements MainActivityFragm
             Bundle args = new Bundle();
             args.putBoolean("twoPane", true);
             args.putParcelable("movie", movie);
-            detailActivityFragment fragment = new detailActivityFragment();
+            DetailActivityFragment fragment = new DetailActivityFragment();
             fragment.setArguments(args);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.movie_detail_container, fragment, TAG_FRAGMENT)
                     .commit();
             //one-pane mode
         } else {
-            Intent intent = new Intent(this, detailActivity.class);
+            Intent intent = new Intent(this, DetailActivity.class);
             intent.putExtra("movie", movie);
 
             // Check if we're running on Android 5.0 or higher

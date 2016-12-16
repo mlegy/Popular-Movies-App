@@ -53,9 +53,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class detailActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class DetailActivityFragment extends Fragment implements AdapterView.OnItemClickListener {
 
-    private static final String LOG_TAG = detailActivityFragment.class.getSimpleName();
+    private static final String LOG_TAG = DetailActivityFragment.class.getSimpleName();
     private Movie movie;
     private ArrayList<Trailer> trailers;
     private ArrayList<Review> mReviews;
@@ -67,7 +67,7 @@ public class detailActivityFragment extends Fragment implements AdapterView.OnIt
     private boolean trailerFound;
     private boolean mTwoPane;
 
-    public detailActivityFragment() {
+    public DetailActivityFragment() {
         setHasOptionsMenu(true);
     }
 
