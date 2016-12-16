@@ -27,12 +27,12 @@ import android.widget.ToggleButton;
 
 import com.melegy.movies.moviesapp.Adapters.ReviewsAdapter;
 import com.melegy.movies.moviesapp.Adapters.TrailersAdapter;
+import com.melegy.movies.moviesapp.BuildConfig;
 import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.Model.Review;
 import com.melegy.movies.moviesapp.Model.Trailer;
 import com.melegy.movies.moviesapp.R;
 import com.melegy.movies.moviesapp.Utility.Utility;
-import com.melegy.movies.moviesapp.Utility.sensitiveData;
 import com.melegy.movies.moviesapp.provider.review.ReviewCursor;
 import com.melegy.movies.moviesapp.provider.review.ReviewSelection;
 import com.melegy.movies.moviesapp.provider.trailer.TrailerCursor;
@@ -337,7 +337,7 @@ public class DetailActivityFragment extends Fragment implements AdapterView.OnIt
                         .appendPath(TMDB_URI_SECOND_PATH)
                         .appendPath(TMDB_URI_THIRD_PATH)
                         .appendPath(TMDB_URI_FOURTH_PATH)
-                        .appendQueryParameter(API_PARAM, sensitiveData.API_KEY);
+                        .appendQueryParameter(API_PARAM, BuildConfig.API_KEY);
 
                 String myUrl = builder.build().toString();
                 URL url = new URL(myUrl);
@@ -465,7 +465,7 @@ public class DetailActivityFragment extends Fragment implements AdapterView.OnIt
                         .appendPath(TMDB_URI_SECOND_PATH)
                         .appendPath(TMDB_URI_THIRD_PATH)
                         .appendPath(TMDB_URI_FOURTH_PATH)
-                        .appendQueryParameter(API_PARAM, sensitiveData.API_KEY);
+                        .appendQueryParameter(API_PARAM, BuildConfig.API_KEY);
 
                 String myUrl = builder.build().toString();
                 URL url = new URL(myUrl);

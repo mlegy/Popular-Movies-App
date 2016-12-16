@@ -19,10 +19,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.melegy.movies.moviesapp.Adapters.MoviesAdapter;
+import com.melegy.movies.moviesapp.BuildConfig;
 import com.melegy.movies.moviesapp.Model.Movie;
 import com.melegy.movies.moviesapp.R;
 import com.melegy.movies.moviesapp.Utility.Utility;
-import com.melegy.movies.moviesapp.Utility.sensitiveData;
 import com.melegy.movies.moviesapp.provider.movie.MovieCursor;
 import com.melegy.movies.moviesapp.provider.movie.MovieSelection;
 import com.rockerhieu.rvadapter.endless.EndlessRecyclerViewAdapter;
@@ -333,7 +333,7 @@ public class MainActivityFragment extends Fragment implements EndlessRecyclerVie
                         .appendPath(TMDB_URI_FIRST_PATH)
                         .appendPath(TMDB_URI_SECOND_PATH)
                         .appendPath(sort_type)
-                        .appendQueryParameter(API_PARAM, sensitiveData.API_KEY)
+                        .appendQueryParameter(API_PARAM, BuildConfig.API_KEY)
                         .appendQueryParameter(PAGE_PARAM, page_num);
 
                 String myUrl = builder.build().toString();
