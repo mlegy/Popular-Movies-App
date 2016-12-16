@@ -5,8 +5,8 @@
     <string name="action_sort_popularity">Popularity</string>
     <string name="action_sort_rating">Rating</string>
     <string name="sort_type">sort_type</string>
-    <string name="sort_popularity">popularity.desc</string>
-    <string name="sort_type_rating">vote_average.desc</string>
+    <string name="sort_popularity">popular</string>
+    <string name="sort_type_rating">top_rated</string>
     <string name="sort_type_fav">fav</string>
 
     <string name="content_authority">com.melegey.movies.moviesapp</string>
